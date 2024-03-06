@@ -18,14 +18,14 @@ The following variables are used to tweak some of the configuration pieces for u
   (defvar efs/default-font-size 100)
   (defvar efs/default-variable-font-size 100)
   (when (eq system-type 'darwin)
-    (setq efs/default-font-size 140
-          efs/default-variable-font-size 140))
+    (setq efs/default-font-size 180
+          efs/default-variable-font-size 180))
 
   ;; Make frame transparency overridable
   (defvar efs/frame-transparency '(90 . 90))
 
        #+end_src
-
+       
 * Tips for Use
 
 In this document I've added links in many places that lead you to documentation for the various packages we use.  If you're looking at this file in Emacs, you can put your cursor on a link and press =C-c C-o= or run =M-x org-open-at-point= to open the link in your web browser.
@@ -1045,6 +1045,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
       (setq projectile-project-search-path '("~/Code/perfProfiling")))
     (setq projectile-switch-project-action #'projectile-dired))
 
+  (setq projectile-indexing-method 'alien)
   (use-package counsel-projectile
     :after projectile
     :config (counsel-projectile-mode))
@@ -1090,6 +1091,30 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 
+#+end_src
+
+** Dockerfile mode
+
+It is useful to highlight Dockerfiles.
+
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode
+    :ensure t)
+#+end_src
+
+** Yasnippet
+
+It is useful for code completions
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+  :ensure t
+  :hook ((text-mode
+          prog-mode
+          conf-mode
+          snippet-mode) . yas-minor-mode-on))
+  ;;:init
+  ;;(setq yas-snippet-dir "~/.emacs.d/snippets"))
 #+end_src
 
 * Terminals
@@ -1328,6 +1353,18 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
   (when (eq system-type 'darwin)
     (setq insert-directory-program "gls" dired-use-ls-dired t)
     (setq dired-listing-switches "-al --group-directories-first"))
+
+#+end_src
+
+*** dired-rsync
+
+#+begin_src emacs-lisp
+
+  (use-package dired-rsync
+    :demand t
+    :after dired
+    :bind (:map dired-mode-map ("r" . dired-rsync))
+    :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
 
 #+end_src
 

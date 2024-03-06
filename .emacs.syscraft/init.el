@@ -5,8 +5,8 @@
 (defvar efs/default-font-size 100)
 (defvar efs/default-variable-font-size 100)
 (when (eq system-type 'darwin)
-  (setq efs/default-font-size 140
-        efs/default-variable-font-size 140))
+  (setq efs/default-font-size 180
+        efs/default-variable-font-size 180))
 
 ;; Make frame transparency overridable
 (defvar efs/frame-transparency '(90 . 90))
@@ -675,6 +675,7 @@
     (setq projectile-project-search-path '("~/Code/perfProfiling")))
   (setq projectile-switch-project-action #'projectile-dired))
 
+(setq projectile-indexing-method 'alien)
 (use-package counsel-projectile
   :after projectile
   :config (counsel-projectile-mode))
@@ -695,6 +696,18 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package dockerfile-mode
+  :ensure t)
+
+(use-package yasnippet
+:ensure t
+:hook ((text-mode
+        prog-mode
+        conf-mode
+        snippet-mode) . yas-minor-mode-on))
+;;:init
+;;(setq yas-snippet-dir "~/.emacs.d/snippets"))
 
 (use-package term
   :commands term
@@ -782,6 +795,12 @@
 (when (eq system-type 'darwin)
   (setq insert-directory-program "gls" dired-use-ls-dired t)
   (setq dired-listing-switches "-al --group-directories-first"))
+
+(use-package dired-rsync
+  :demand t
+  :after dired
+  :bind (:map dired-mode-map ("r" . dired-rsync))
+  :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
