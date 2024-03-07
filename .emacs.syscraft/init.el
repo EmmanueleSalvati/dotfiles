@@ -804,3 +804,17 @@
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(helm-minibuffer-history-key "M-p")
+ '(package-selected-packages
+   '(dired-rsync dired-hide-dotfiles dired-open all-the-icons-dired dired-single eshell-git-prompt vterm eterm-256color yasnippet dockerfile-mode rainbow-delimiters evil-nerd-commenter forge magit counsel-projectile projectile company-box company yaml-mode pyvenv python-mode typescript-mode dap-mode flycheck lsp-ivy lsp-treemacs lsp-ui lsp-mode citar-org-roam org-roam visual-fill-column org-bullets org-books hydra helpful ivy-prescient which-key no-littering ivy-rich general evil-collection doom-themes doom-modeline counsel command-log-mode auto-package-update all-the-icons)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

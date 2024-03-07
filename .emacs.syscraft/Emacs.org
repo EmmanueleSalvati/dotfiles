@@ -431,7 +431,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
   (setq org-base-path (expand-file-name
                        (cond ((string-equal system-name "MACC02DC2DEMD6N") "~/org")
-                             ((string-equal system-name "MacBookPro") "~/MEGA/org")
+                             ((string-equal system-name "Emmanueles-MBP") "~/MEGA/org")
                              (t "~/MEGA/MEGA/org"))))
 
   (use-package org
