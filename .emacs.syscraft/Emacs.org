@@ -431,7 +431,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
   (setq org-base-path (expand-file-name
                        (cond ((string-equal system-name "MACC02DC2DEMD6N") "~/org")
-                             ((string-equal system-name "Emmanueles-MBP") "~/MEGA/org")
+                             ((string-equal system-name "Emmanueles-MacBook-Pro.local") "~/MEGA/org")
                              (t "~/MEGA/MEGA/org"))))
 
   (use-package org
@@ -728,25 +728,34 @@ From the creator of org-roam: https://jethrokuan.github.io/org-roam-guide/
   (global-set-key (kbd "C-c n b") #'efs/org-roam-capture-fleeting)
 #+end_src
 
-How to use citations:
+#+begin_src emacs-lisp
+(use-package citar-org-roam
+  :after (citar org-roam)
+  :config (citar-org-roam-mode))
+  
+#+end_src
+
+
+The following is difficult to understand, let me comment it out until I figure it out.
+#+begin_src emacs-lisp
+    ;; (use-package citar-org-roam
+    ;;   :after (citar org-roam)
+    ;;   :config (citar-org-roam-mode)
+    ;;   :custom
+    ;;   (org-cite-global-bibliography '("~/MEGA/org-roam/biblio.bib"))
+    ;;   (org-cite-insert-processor 'citar)
+    ;;   (org-cite-follow-processor 'citar)
+    ;;   (org-cite-activate-processor 'citar)
+    ;;   (citar-bibliography '("~/MEGA/org-roam/biblio.bib"))
+    ;;   (citar-notes-paths '("~/MEGA/org-roam/reference"))
+    ;;   (citar-symbols
+    ;;    `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
+    ;;      (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
+    ;;      (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
+    ;;   (citar-symbol-separator "  "))
+#+end_src
 
 #+begin_src emacs-lisp
-  (use-package citar-org-roam
-    :after (citar org-roam)
-    :config (citar-org-roam-mode)
-    :custom
-    (org-cite-global-bibliography '("~/org-roam/biblio.bib"))
-    (org-cite-insert-processor 'citar)
-    (org-cite-follow-processor 'citar)
-    (org-cite-activate-processor 'citar)
-    (citar-bibliography '("~/org-roam/biblio.bib"))
-    (citar-notes-paths '("~/org-roam/reference"))
-    (citar-symbols
-     `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
-       (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
-       (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
-    (citar-symbol-separator "  ")
-    )
   ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
   ;; for customizing the contents of a new note and no way to specify a custom
   ;; capture template. And the title template uses citar's own format, which means
@@ -755,44 +764,47 @@ How to use citations:
   ;; Left with no other options, we override the
   ;; citar-org-roam--create-capture-note function and use our own template in it.
 
-  (defun dh/citar-org-roam--create-capture-note (citekey entry)
-    "Open or create org-roam node for CITEKEY and ENTRY."
-    ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
-    (let ((title (citar-format--entry
-                  citar-org-roam-note-title-template entry)))
-      (org-roam-capture-
-       :templates
-       '(("r" "reference" plain "%?" :if-new
-          (file+head
-           "%(concat
-   (when citar-org-roam-subdir (concat citar-org-roam-subdir \"/\")) \"${citekey}.org\")"
-           "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
-          :immediate-finish t
-          :unnarrowed t))
-       :info (list :citekey citekey)
-       :node (org-roam-node-create :title title)
-       :props '(:finalize find-file))
-      (org-roam-ref-add (concat "@" citekey))))
+  ;; (defun dh/citar-org-roam--create-capture-note (citekey entry)
+  ;;   "Open or create org-roam node for CITEKEY and ENTRY."
+  ;;   ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
+  ;;   (let ((title (citar-format--entry
+  ;;                 citar-org-roam-note-title-template entry)))
+  ;;     (org-roam-capture-
+  ;;      :templates
+  ;;      '(("r" "reference" plain "%?" :if-new
+  ;;         (file+head
+  ;;          "%(concat
+  ;;  (when citar-org-roam-subdir (concat citar-org-roam-subdir \"/\")) \"${citekey}.org\")"
+  ;;          "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
+  ;;         :immediate-finish t
+  ;;         :unnarrowed t))
+  ;;      :info (list :citekey citekey)
+  ;;      :node (org-roam-node-create :title title)
+  ;;      :props '(:finalize find-file))
+  ;;     (org-roam-ref-add (concat "@" citekey))))
 
-  ;; citar has a function for inserting bibtex entries into a buffer, but none for
+  ;; citar has a function for inse  rting bibtex entries into a buffer, but none for
   ;; returning a string. We could insert into a temporary buffer, but that seems
   ;; silly. Plus, we'd have to deal with trailing newlines that the function
   ;; inserts. Instead, we do a little copying and implement our own function.
-  (defun dh/citar-get-bibtex (citekey)
-    (let* ((bibtex-files
-            (citar--bibliography-files))
-           (entry
-            (with-temp-buffer
-              (bibtex-set-dialect)
-              (dolist (bib-file bibtex-files)
-                (insert-file-contents bib-file))
-              (bibtex-search-entry citekey)
-              (let ((beg (bibtex-beginning-of-entry))
-                    (end (bibtex-end-of-entry)))
-                (buffer-substring-no-properties beg end)))))
-      entry))
 
-  (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
+  ;; (defun dh/citar-get-bibtex (citekey)
+  ;;   (let* ((bibtex-files
+  ;;           (citar--bibliography-files))
+  ;;          (entry
+  ;;           (with-temp-buffer
+  ;;             (bibtex-set-dialect)
+  ;;             (dolist (bib-file bibtex-files)
+  ;;               (insert-file-contents bib-file))
+  ;;             (bibtex-search-entry citekey)
+  ;;             (let ((beg (bibtex-beginning-of-entry))
+  ;;                   (end (bibtex-end-of-entry)))
+  ;;               (buffer-substring-no-properties beg end)))))
+  ;;     entry))
+
+  ;; (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
+
+  ;; (global-set-key (kbd "C-c n   l") #'citar-org-roam--create-capture-note)
 
 #+end_src
 
