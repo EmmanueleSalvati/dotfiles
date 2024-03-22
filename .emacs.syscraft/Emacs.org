@@ -436,8 +436,8 @@ This section contains the basic configuration for =org-mode= plus the configurat
     (visual-line-mode 1))
 
   (setq org-base-path (expand-file-name
-                       (cond ((string-equal system-name "MACC02DC2DEMD6N") "~/org")
-                             ((string-equal system-name "Emmanueles-MacBook-Pro.local") "~/MEGA/org")
+                       (cond ((string-equal (system-name) "MACC02DC2DEMD6N") "~/org")
+                             ((string-equal (system-name) "Emmanueles-MBP") "~/MEGA/org")
                              (t "~/MEGA/MEGA/org"))))
 
   (use-package org
@@ -455,7 +455,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
                              "piano-log.org"
                              "work-log.org"
                              "Archive.org"
-                             "mybooks.org" ))
+                             "mybooks.org"))
     ;;(setq org-agenda-files
     ;;      (list (format "%s/%s" org-base-path "Tasks.org")
     ;;            (format "%s/%s" org-base-path "piano-log.org")
@@ -680,7 +680,8 @@ From the creator of org-roam: https://jethrokuan.github.io/org-roam-guide/
   (use-package org-roam
     :ensure t
     :custom
-    (org-roam-directory (concat org-base-path "-roam"))
+    ;;(org-roam-directory (concat org-base-path "-roam"))
+    (org-roam-directory org-roam-base-path)
     (org-roam-completion-everywhere t)
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
@@ -713,21 +714,29 @@ From the creator of org-roam: https://jethrokuan.github.io/org-roam-guide/
 #+end_src
 
 #+begin_src emacs-lisp
-  (use-package citar-org-roam
-    :after (citar org-roam)
-    :config (citar-org-roam-mode)
+
+  (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
+
+  (use-package citar
     :custom
-    (org-cite-global-bibliography '("~/org-roam/biblio.bib"))
+    (org-cite-global-bibliography bibliography-list)
+    ;;(org-cite-global-bibliography '("~/MEGA/org-roam/biblio.bib"))
     (org-cite-insert-processor 'citar)
     (org-cite-follow-processor 'citar)
     (org-cite-activate-processor 'citar)
-    (citar-bibliography '("~/org-roam/biblio.bib"))
-    (citar-notes-paths '("~/org-roam/reference"))
+    ;;(citar-bibliography '("~/MEGA/org-roam/biblio.bib"))
+    (citar-bibliography org-cite-global-bibliography)
+    ;; (citar-notes-paths '("~/org-roam/reference"))
+    (citar-notes-paths (list (format "%s/%s" org-roam-base-path "reference")))
     (citar-symbols
      `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
        (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
        (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
     (citar-symbol-separator "  "))
+
+  (use-package citar-org-roam
+    :after (citar org-roam)
+    :config (citar-org-roam-mode))
 
   (setq org-roam-capture-templates
         '(("d" "default" plain
