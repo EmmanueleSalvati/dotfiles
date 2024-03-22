@@ -745,77 +745,87 @@ From the creator of org-roam: https://jethrokuan.github.io/org-roam-guide/
            :unnarrowed t)
           ("m" "main" plain
            "%?"
-           :if-new (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :target (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
           ("b" "book notes" plain
            "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
            ;;        (file "~/org-roam/Templates/BookNoteTemplate.org")
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
           ("u" "url notes" plain
            "\n* Source\n\nURL: %^{URL}\nTitle: ${title}\n\n* Summary\n\n%?"
            ;;        (file "~/org-roam/Templates/URLTemplate.org")
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)))
+
+#+end_src
+
+Every zettel is a draft until declared otherwise:
+
+#+begin_src emacs-lisp
+
+  (defun jethro/tag-new-node-as-draft ()
+    (org-roam-tag-add '("draft")))
+  (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
 
 #+end_src
 
 
 
 #+begin_src emacs-lisp
-    ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
-    ;; for customizing the contents of a new note and no way to specify a custom
-    ;; capture template. And the title template uses citar's own format, which means
-    ;; we can't run arbitrary functions in it.
-    ;;
-    ;; Left with no other options, we override the
-    ;; citar-org-roam--create-capture-note function and use our own template in it.
+  ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
+  ;; for customizing the contents of a new note and no way to specify a custom
+  ;; capture template. And the title template uses citar's own format, which means
+  ;; we can't run arbitrary functions in it.
+  ;;
+  ;; Left with no other options, we override the
+  ;; citar-org-roam--create-capture-note function and use our own template in it.
 
-    (setq citar-org-roam-subdir "reference")
+  (setq citar-org-roam-subdir "reference")
 
-    (defun dh/citar-org-roam--create-capture-note (citekey entry)
-      "Open or create org-roam node for CITEKEY and ENTRY."
-      ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
-      (let ((title (citar-format--entry
-                    citar-org-roam-note-title-template entry)))
-        (org-roam-capture-
-         :templates
-         '(("n" "literature note" plain
-            "%?"
-            :target (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citekey}.org"
-                       "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
-            :immediate-finish t
-            :unnarrowed t))
-         :info (list :citekey citekey)
-         :node (org-roam-node-create :title title)
-         :props '(:finalize find-file))
-        (org-roam-ref-add (concat "@" citekey))))
+  (defun dh/citar-org-roam--create-capture-note (citekey entry)
+    "Open or create org-roam node for CITEKEY and ENTRY."
+    ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
+    (let ((title (citar-format--entry
+                  citar-org-roam-note-title-template entry)))
+      (org-roam-capture-
+       :templates
+       '(("n" "literature note" plain
+          "%?"
+          :target (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citekey}.org"
+                             "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
+          :immediate-finish t
+          :unnarrowed t))
+       :info (list :citekey citekey)
+       :node (org-roam-node-create :title title)
+       :props '(:finalize find-file))
+      (org-roam-ref-add (concat "@" citekey))))
 
-    ;; citar has a function for inserting bibtex entries into a buffer, but none for
-    ;; returning a string. We could insert into a temporary buffer, but that seems
-    ;; silly. Plus, we'd have to deal with trailing newlines that the function
-    ;; inserts. Instead, we do a little copying and implement our own function.
+  ;; citar has a function for inserting bibtex entries into a buffer, but none for
+  ;; returning a string. We could insert into a temporary buffer, but that seems
+  ;; silly. Plus, we'd have to deal with trailing newlines that the function
+  ;; inserts. Instead, we do a little copying and implement our own function.
 
-    (defun dh/citar-get-bibtex (citekey)
-      (let* ((bibtex-files
-              (citar--bibliography-files))
-             (entry
-              (with-temp-buffer
-                (bibtex-set-dialect)
-                (dolist (bib-file bibtex-files)
-                  (insert-file-contents bib-file))
-                (bibtex-search-entry citekey)
-                (let ((beg (bibtex-beginning-of-entry))
-                      (end (bibtex-end-of-entry)))
-                  (buffer-substring-no-properties beg end)))))
-        entry))
+  (defun dh/citar-get-bibtex (citekey)
+    (let* ((bibtex-files
+            (citar--bibliography-files))
+           (entry
+            (with-temp-buffer
+              (bibtex-set-dialect)
+              (dolist (bib-file bibtex-files)
+                (insert-file-contents bib-file))
+              (bibtex-search-entry citekey)
+              (let ((beg (bibtex-beginning-of-entry))
+                    (end (bibtex-end-of-entry)))
+                (buffer-substring-no-properties beg end)))))
+      entry))
 
-    (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
+  (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
 
-    ;; (global-set-key (kbd "C-c n   l") #'citar-org-roam--create-capture-note)
+  ;; (global-set-key (kbd "C-c n   l") #'citar-org-roam--create-capture-note)
 
 #+end_src
 
