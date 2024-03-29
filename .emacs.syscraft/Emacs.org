@@ -80,7 +80,7 @@ Emacs has a built in package manager but it doesn't make it easy to automaticall
   (unless package-archive-contents
     (package-refresh-contents))
 
-    ;; Initialize use-package on non-Linux platforms
+  ;; Initialize use-package on non-Linux platforms
   (unless (package-installed-p 'use-package)
     (package-install 'use-package))
 
@@ -122,7 +122,7 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 
   ;; NOTE: If you want to move everything out of the ~/.emacs.d folder
   ;; reliably, set `user-emacs-directory` before loading no-littering!
-  ;(setq user-emacs-directory "~/.cache/emacs")
+                                          ;(setq user-emacs-directory "~/.cache/emacs")
 
   (use-package no-littering)
 
@@ -181,13 +181,24 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
 
 #+begin_src emacs-lisp
 
-(set-face-attribute 'default nil :font "Fira Code Retina" :height efs/default-font-size)
+  (defun efs/set-font-faces ()
+    (message "Setting font faces!")
 
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height efs/default-font-size)
+    (set-face-attribute 'default nil :font "Fira Code Retina" :height efs/default-font-size)
 
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Iosevka" :height efs/default-variable-font-size :weight 'regular)
+    ;; Set the fixed pitch face
+    (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height efs/default-font-size)
+
+    ;; Set the variable pitch face
+    (set-face-attribute 'variable-pitch nil :font "Iosevka" :height efs/default-variable-font-size :weight 'regular))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (setq doom-modeline-icon t)
+                  (with-selected-frame frame
+                    (efs/set-font-faces))))
+    (efs/set-font-faces))
 
 #+end_src
 
