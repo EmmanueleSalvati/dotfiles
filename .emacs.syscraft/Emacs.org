@@ -24,7 +24,7 @@ The following variables are used to tweak some of the configuration pieces for u
   ;; Make frame transparency overridable
   (defvar efs/frame-transparency '(90 . 90))
 
-#+end_src
+  #+end_src
 
 #+RESULTS:
 : efs/frame-transparency
@@ -539,58 +539,6 @@ This section contains the basic configuration for =org-mode= plus the configurat
             (:endgroup)))
 
     ;; Configure custom agenda views
-    ;; (setq org-agenda-custom-commands
-    ;; '(("d" "Dashboard"
-    ;; ((agenda "" (
-    ;; (org-deadline-warning-days 7)
-    ;; (org-agenda-span 7)))
-
-    ;; (todo "NEXT"
-    ;;       ((org-agenda-overriding-header "Next Tasks")))
-    ;; (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
-    ;; ))
-
-    ;; ("n" "Next Tasks"
-    ;;  ((todo "NEXT"
-    ;;         ((org-agenda-overriding-header "Next Tasks")))
-    ;;   (tags-todo "TODAY" ((org-agenda-overriding-header "Today Tasks")))))
-
-    ;; ("W" "Work Tasks" tags-todo "+work-email")
-
-    ;; Low-effort next actions
-    ;; ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-    ;; ((org-agenda-overriding-header "Low Effort Tasks")
-    ;; (org-agenda-max-todos 20)
-    ;; (org-agenda-files org-agenda-files)))
-
-    ;; ("w" "Workflow Status"
-    ;;  ((todo "WAIT"
-    ;;         ((org-agenda-overriding-header "Waiting on External")
-    ;;          (org-agenda-files org-agenda-files)))
-    ;;   (todo "REVIEW"
-    ;;         ((org-agenda-overriding-header "In Review")
-    ;;          (org-agenda-files org-agenda-files)))
-    ;;   (todo "PLAN"
-    ;;         ((org-agenda-overriding-header "In Planning")
-    ;;          (org-agenda-todo-list-sublevels nil)
-    ;;          (org-agenda-files org-agenda-files)))
-    ;;   (todo "BACKLOG"
-    ;;         ((org-agenda-overriding-header "Project Backlog")
-    ;;          (org-agenda-todo-list-sublevels nil)
-    ;;          (org-agenda-files org-agenda-files)))
-    ;;   (todo "READY"
-
-    ;;         (org-agenda-files org-agenda-files)))
-    ;;  (todo "ACTIVE"
-    ;;        ((org-agenda-overriding-header "Active Projects")
-    ;;         (org-agenda-files org-agenda-files)))
-    ;;  (todo "COMPLETED"
-    ;;        ((org-agenda-overriding-header "Completed Projects")
-    ;;         (org-agenda-files org-agenda-files)))
-    ;;  (todo "CANC"
-    ;;        ((org-agenda-overriding-header "Cancelled Projects")
-    ;;         (org-agenda-files org-agenda-files))))
-    ;; ))
 
     (setq org-capture-templates
           `(("t" "Tasks / Projects")
@@ -653,6 +601,66 @@ This section contains the basic configuration for =org-mode= plus the configurat
     :after org
     :config
     (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
+
+#+end_src
+
+org mode stuff to ponder about:
+
+#+begin_src emacs-lisp
+
+  ;; Configure custom agenda views
+  ;; (setq org-agenda-custom-commands
+  ;; '(("d" "Dashboard"
+  ;; ((agenda "" (
+  ;; (org-deadline-warning-days 7)
+  ;; (org-agenda-span 7)))
+
+  ;; (todo "NEXT"
+  ;;       ((org-agenda-overriding-header "Next Tasks")))
+  ;; (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+  ;; ))
+
+  ;; ("n" "Next Tasks"
+  ;;  ((todo "NEXT"
+  ;;         ((org-agenda-overriding-header "Next Tasks")))
+  ;;   (tags-todo "TODAY" ((org-agenda-overriding-header "Today Tasks")))))
+
+  ;; ("W" "Work Tasks" tags-todo "+work-email")
+
+  ;; Low-effort next actions
+  ;; ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+  ;; ((org-agenda-overriding-header "Low Effort Tasks")
+  ;; (org-agenda-max-todos 20)
+  ;; (org-agenda-files org-agenda-files)))
+
+  ;; ("w" "Workflow Status"
+  ;;  ((todo "WAIT"
+  ;;         ((org-agenda-overriding-header "Waiting on External")
+  ;;          (org-agenda-files org-agenda-files)))
+  ;;   (todo "REVIEW"
+  ;;         ((org-agenda-overriding-header "In Review")
+  ;;          (org-agenda-files org-agenda-files)))
+  ;;   (todo "PLAN"
+  ;;         ((org-agenda-overriding-header "In Planning")
+  ;;          (org-agenda-todo-list-sublevels nil)
+  ;;          (org-agenda-files org-agenda-files)))
+  ;;   (todo "BACKLOG"
+  ;;         ((org-agenda-overriding-header "Project Backlog")
+  ;;          (org-agenda-todo-list-sublevels nil)
+  ;;          (org-agenda-files org-agenda-files)))
+  ;;   (todo "READY"
+
+  ;;         (org-agenda-files org-agenda-files)))
+  ;;  (todo "ACTIVE"
+  ;;        ((org-agenda-overriding-header "Active Projects")
+  ;;         (org-agenda-files org-agenda-files)))
+  ;;  (todo "COMPLETED"
+  ;;        ((org-agenda-overriding-header "Completed Projects")
+  ;;         (org-agenda-files org-agenda-files)))
+  ;;  (todo "CANC"
+  ;;        ((org-agenda-overriding-header "Cancelled Projects")
+  ;;         (org-agenda-files org-agenda-files))))
+  ;; ))
 
 #+end_src
 
@@ -787,6 +795,7 @@ From the creator of org-roam: https://jethrokuan.github.io/org-roam-guide/
   (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
 
   (use-package citar
+    :no-require
     :custom
     (org-cite-global-bibliography bibliography-list)
     (org-cite-insert-processor 'citar)
