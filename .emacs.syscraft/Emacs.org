@@ -200,7 +200,7 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
                     (efs/set-font-faces))))
     (efs/set-font-faces))
 
-    #+end_src
+#+end_src
 
 #+RESULTS:
 
@@ -479,8 +479,9 @@ This section contains the basic configuration for =org-mode= plus the configurat
                              (t "~/MEGA/MEGA/org"))))
 
   (use-package org-super-agenda
-    :ensure t)
-  (setq org-super-agenda-mode t)
+    :ensure t
+    :after org
+    :hook (org-mode . org-super-agenda-mode))
 
   (use-package org
     :pin org
@@ -627,9 +628,6 @@ This section contains the basic configuration for =org-mode= plus the configurat
   (setq org-agenda-custom-commands
         '(("d" "Dashboard"
            (
-            ;; (agenda "" (
-            ;;             (org-deadline-warning-days 7)
-            ;;             (org-agenda-span 7)))
             (alltodo ""
                      ((org-agenda-prefix-format "  %t  %s")
                       (org-agenda-overriding-header "CURRENT TASKS")
@@ -652,10 +650,11 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
 
   (use-package org-books
+    :after org
     :config
     (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
 
-          #+end_src
+#+end_src
 
 *** Nicer Heading Bullets
 
