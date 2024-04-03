@@ -498,7 +498,6 @@ This section contains the basic configuration for =org-mode= plus the configurat
                              "piano-log.org"
                              "work-log.org"
                              "Archive.org"
-                             "emacs-lisp.org"
                              "mybooks.org"))
 
     (require 'org-habit)
@@ -787,6 +786,7 @@ From the creator of org-roam: https://jethrokuan.github.io/org-roam-guide/
   (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
 
   (use-package citar
+    :no-require
     :custom
     (org-cite-global-bibliography bibliography-list)
     (org-cite-insert-processor 'citar)
