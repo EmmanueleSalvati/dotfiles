@@ -592,7 +592,9 @@ This section contains the basic configuration for =org-mode= plus the configurat
                                       :order 3)
                          (:name "This Week"
                                 :todo "THISWEEK"
-                                :order 3))
+                                :order 3)
+                         (:name "Work
+                                :tag "@work"))
                        )))))))
 
 
