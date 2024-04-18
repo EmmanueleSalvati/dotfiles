@@ -593,15 +593,16 @@ This section contains the basic configuration for =org-mode= plus the configurat
                          (:name "This Week"
                                 :todo "THISWEEK"
                                 :order 3)
-                         (:name "Work
-                                :tag "@work"))
-                       )))))))
+                         (:name "Work"
+                                    :tag "@work"
+                                    :order 4))
+                           )))))))
 
 
-  (use-package org-books
-    :after org
-    :config
-    (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
+      (use-package org-books
+        :after org
+        :config
+        (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
 
 #+end_src
 
@@ -921,18 +922,30 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
 #+begin_src emacs-lisp
 
-  (defun efs/lsp-mode-setup ()
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadcrumb-mode)
-    (setq lsp-diagnostics-provider :none))
+  ;; (defun efs/lsp-mode-setup ()
+  ;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  ;;   (lsp-headerline-breadcrumb-mode)
+  ;;   (setq lsp-diagnostics-provider :none))
+
+  ;;  (use-package lsp-mode
+  ;;   :commands (lsp lsp-deferred)
+  ;;   :hook (lsp-mode . efs/lsp-mode-setup)
+  ;;   :init
+  ;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  ;;   :config
+  ;;   (lsp-enable-which-key-integration t))
 
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
-    :hook (lsp-mode . efs/lsp-mode-setup)
+    :hook
+    (lsp-mode . lsp-enable-which-key-integration)
+    :custom
+    (lsp-diagnostic-provider :capf)
+    (lsp-headerline-breadcrumb-enable t)
+    (lsp-lens-enable nil)
+    (lsp-disabled-clients '((python-mode . pyls)))
     :init
-    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-    :config
-    (lsp-enable-which-key-integration t))
+    (setq lsp-keymap-prefix "C-c l"))
 
 #+end_src
 
@@ -944,8 +957,11 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
   (use-package lsp-ui
     :hook (lsp-mode . lsp-ui-mode)
+    :after lsp-mode
     :custom
-    (lsp-ui-doc-position 'bottom))
+    (lsp-ui-doc-show-with-cursor nil)
+    :config
+    (setq lsp-ui-doc-position 'bottom))
 
 #+end_src
 
@@ -964,7 +980,7 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
 #+begin_src emacs-lisp
 
   (use-package lsp-treemacs
-    :after lsp)
+    :after lsp-mode treemacs)
 
 #+end_src
 
@@ -980,7 +996,7 @@ Try these commands with =M-x=:
 #+begin_src emacs-lisp
 
   (use-package lsp-ivy
-    :after lsp)
+    :after lsp-mode)
 
 #+end_src
 
@@ -992,11 +1008,20 @@ Turn off flymake and start flycheck
 
   (use-package flycheck
     :ensure t
+    :diminish flycheck-mode
+    :init
+    (setq flycheck-check-syntax-automatically '(save new-line)
+          flycheck-idle-change-delay 5.0
+          flycheck-display-errors-delay 0.9
+          flycheck-highlighting-mode 'symbols
+          flycheck-indication-mode 'left-fringe
+          flycheck-standard-error-navigation t 
+          flycheck-deferred-syntax-check nil)
     :config
-    ;;(add-hook 'python-mode-hook 'flycheck-mode))
     (add-hook 'after-init-hook #'global-flycheck-mode))
 
   (setq flycheck-flake8rc "/Users/emmanuelesalvati/.flake8")
+  ;;(add-hook 'python-mode-hook 'flycheck-mode))
 
 #+end_src
 
@@ -1064,30 +1089,84 @@ Make sure you have the =pyls= language server installed before trying =lsp-mode=
 
 There are a number of other language servers for Python so if you find that =pyls= doesn't work for you, consult the =lsp-mode= [[https://emacs-lsp.github.io/lsp-mode/page/languages/][language configuration documentation]] to try the others!
 
+**** pyright lsp
+
+Here is pyright, from here: https://github.com/daviwil/emacs-from-scratch/wiki/LSP-Python-(pyright)-config-in-emacs-from-scratch#pyright
+
 #+begin_src emacs-lisp
 
-  (use-package python-mode
+  (use-package lsp-pyright
     :ensure t
-    :hook ((python-mode . lsp-deferred)
-           (python-mode . hs-minor-mode))
+    :hook
+    (python-mode . (lambda ()
+                     (require 'lsp-pyright)
+                     (lsp-deferred))))
+
+#+end_src
+
+**** pyenv
+
+#+begin_src emacs-lisp
+
+  (use-package pyvenv
+    :ensure t
+    :init
+    (setenv "WORKON_HOME" "~/.venvs")
+    :config
+    (setq pyvenv-post-activate-hooks
+          (list (lambda ()
+                  (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
+    (setq pyvenv-post-deactivate-hooks
+          (list (lambda ()
+                  (setq python-shell-interpreter "python3")))))
+#+end_src
+
+**** formatting
+
+#+begin_src emacs-lisp
+  (use-package blacken
+    :init
+    (setq-default blacken-fast-unsafe t)
+    (setq-default blacken-line-length 88))
+#+end_src
+
+**** python-mode
+
+#+begin_src emacs-lisp
+
+  ;; (use-package python-mode
+  ;;   :ensure t
+  ;;   :hook ((python-mode . lsp-deferred)
+  ;;          (python-mode . hs-minor-mode))
+  ;;   :custom
+  ;;   ;; NOTE: Set these if Python 3 is called "python3" on your system!
+  ;;   ;; (python-shell-interpreter "python3")
+  ;;   ;; (dap-python-executable "python3")
+  ;;   (dap-python-debugger 'debugpy)
+  ;;   :config
+  ;;   (require 'dap-python))
+
+  (use-package python-mode
+    :hook
+    (python-mode . pyvenv-mode)
+    (python-mode . flycheck-mode)
+    (python-mode . company-mode)
+    (python-mode . blacken-mode)
+    (python-mode . yas-minor-mode)
     :custom
     ;; NOTE: Set these if Python 3 is called "python3" on your system!
-    ;; (python-shell-interpreter "python3")
-    ;; (dap-python-executable "python3")
-    (dap-python-debugger 'debugpy)
-    :config
-    (require 'dap-python))
-
+    (python-shell-interpreter "python3")
+    :config)
 #+end_src
 
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
 
 #+begin_src emacs-lisp
 
-  (use-package pyvenv
-    :after python-mode
-    :config
-    (pyvenv-mode 1))
+  ;; (use-package pyvenv
+  ;;   :after python-mode
+  ;;   :config
+  ;;   (pyvenv-mode 1))
 
 #+end_src
 
@@ -1146,7 +1225,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
   (use-package company-box
     :hook (company-mode . company-box-mode))
 
-#+end_src
+  #+end_src
 
 ** Projectile
 
@@ -1228,12 +1307,15 @@ It is useful to highlight Dockerfiles.
 It is useful for code completions
 
 #+begin_src emacs-lisp
+  (use-package yasnippet-snippets)
   (use-package yasnippet
-  :ensure t
-  :hook ((text-mode
-          prog-mode
-          conf-mode
-          snippet-mode) . yas-minor-mode-on))
+    :ensure t
+    ;; :diminish yas-minor-mode
+    :config (yas-reload-all)
+    :hook ((text-mode
+            prog-mode
+            conf-mode
+            snippet-mode) . yas-minor-mode-on))
   ;;:init
   ;;(setq yas-snippet-dir "~/.emacs.d/snippets"))
 #+end_src
