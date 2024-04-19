@@ -1566,7 +1566,7 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
   (use-package dired-rsync
     :demand t
     :after dired
-    :bind (:map dired-mode-map ("r" . dired-rsync))
+    :bind (:map dired-mode-map ("C-x C-r" . dired-rsync))
     :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
 
 #+end_src
