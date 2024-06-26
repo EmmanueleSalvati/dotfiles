@@ -21,8 +21,11 @@ The following variables are used to tweak some of the configuration pieces for u
     (setq efs/default-font-size 180
           efs/default-variable-font-size 180))
 
+  (when (equal (system-name) "yarnbaby")
+    (setq efs/default-font-size 150
+          efs/default-variable-font-size 150))
   ;; Make frame transparency overridable
-  (defvar efs/frame-transparency '(90 . 90))
+  (defvar efs/frame-transparency '(95 . 95))
 
   #+end_src
 
