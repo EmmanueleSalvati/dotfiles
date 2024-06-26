@@ -479,6 +479,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
   (setq org-base-path (expand-file-name
                        (cond ((string-equal (system-name) "MACC02DC2DEMD6N") "~/org")
                              ((string-equal (system-name) "Emmanueles-MBP") "~/MEGA/org")
+                             ((string-equal (system-name) "yarnbaby")  "~/MEGA/org")
                              (t "~/MEGA/MEGA/org"))))
 
   (use-package org-super-agenda
@@ -597,17 +598,17 @@ This section contains the basic configuration for =org-mode= plus the configurat
                                 :todo "THISWEEK"
                                 :order 3)
                          (:name "Work"
-                                    :tag "@work"
-                                    :order 4))
-                           )))))))
+                                :tag "@work"
+                                :order 4))
+                       )))))))
 
 
-      (use-package org-books
-        :after org
-        :config
-        (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
+  (use-package org-books
+    :after org
+    :config
+    (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
 
-#+end_src
+                               #+end_src
 
 org mode stuff to ponder about:
 
@@ -689,7 +690,7 @@ We use [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]
 #+begin_src emacs-lisp
 
   (defun efs/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
+    (setq visual-fill-column-width 140
           visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
 
