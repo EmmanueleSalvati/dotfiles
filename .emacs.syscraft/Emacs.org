@@ -1111,8 +1111,9 @@ Here is pyright, from here: https://github.com/daviwil/emacs-from-scratch/wiki/L
   (use-package pyvenv
     :ensure t
     :init
-    (setenv "WORKON_HOME" "~/.venvs")
+    (setenv "WORKON_HOME" "~/.pyenv")
     :config
+    (pyvenv-mode 1)
     (setq pyvenv-post-activate-hooks
           (list (lambda ()
                   (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
@@ -1164,9 +1165,9 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 #+begin_src emacs-lisp
 
   ;; (use-package pyvenv
-  ;;   :after python-mode
-  ;;   :config
-  ;;   (pyvenv-mode 1))
+    ;; :after python-mode
+    ;; :config
+    ;; (pyvenv-mode 1))
 
 #+end_src
 
