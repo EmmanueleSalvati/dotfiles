@@ -1115,7 +1115,7 @@ Here is pyright, from here: https://github.com/daviwil/emacs-from-scratch/wiki/L
   (use-package pyvenv
     :ensure t
     :init
-    (setenv "WORKON_HOME" "~/.pyenv")
+    (setenv "WORKON_HOME" "~/.pyenv/versions")
     :config
     (pyvenv-mode 1)
     (setq pyvenv-post-activate-hooks
