@@ -8,18 +8,21 @@
   (setq efs/default-font-size 180
         efs/default-variable-font-size 180))
 
+(when (equal (system-name) "yarnbaby")
+  (setq efs/default-font-size 150
+        efs/default-variable-font-size 150))
 ;; Make frame transparency overridable
-(defvar efs/frame-transparency '(90 . 90))
+(defvar efs/frame-transparency '(95 . 95))
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
-  (defun efs/display-startup-time ()
-    (message "Emacs loaded in %s with %d garbage collections."
-             (format "%.2f seconds"
-                     (float-time
-                       (time-subtract after-init-time before-init-time)))
-             gcs-done))
+(defun efs/display-startup-time ()
+  (message "Emacs loaded in %s with %d garbage collections."
+           (format "%.2f seconds"
+                   (float-time
+                    (time-subtract after-init-time before-init-time)))
+           gcs-done))
 
 (add-hook 'emacs-startup-hook #'efs/display-startup-time)
 
@@ -36,7 +39,7 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-  ;; Initialize use-package on non-Linux platforms
+;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
@@ -54,7 +57,7 @@
 
 ;; NOTE: If you want to move everything out of the ~/.emacs.d folder
 ;; reliably, set `user-emacs-directory` before loading no-littering!
-;(setq user-emacs-directory "~/.cache/emacs")
+                                        ;(setq user-emacs-directory "~/.cache/emacs")
 
 (use-package no-littering)
 
@@ -92,13 +95,24 @@
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "Fira Code Retina" :height efs/default-font-size)
+(defun efs/set-font-faces ()
+  (message "Setting font faces!")
 
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height efs/default-font-size)
+  (set-face-attribute 'default nil :font "Fira Code Retina" :height efs/default-font-size)
 
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Iosevka" :height efs/default-variable-font-size :weight 'regular)
+  ;; Set the fixed pitch face
+  (set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height efs/default-font-size)
+
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil :font "Iosevka" :height efs/default-variable-font-size :weight 'regular))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (setq doom-modeline-icon t)
+                (with-selected-frame frame
+                  (efs/set-font-faces))))
+  (efs/set-font-faces))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -134,13 +148,19 @@
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (evil-set-initial-state 'help-mode 'emacs)
+  (evil-set-initial-state 'inferior-python-mode 'emacs)
+  (evil-set-initial-state 'special-mode 'emacs)
+  (evil-set-initial-state 'messages-buffer-mode 'emacs)
+  (evil-set-initial-state 'dashboard-mode 'emacs))
 
 (use-package evil-collection
   :after evil
   :config
   (evil-collection-init))
+
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 (use-package command-log-mode
   :commands command-log-mode)
@@ -164,18 +184,18 @@
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
-	 :map ivy-minibuffer-map
-	 ("TAB" . ivy-alt-done)
-	 ("C-l" . ivy-alt-done)
-	 ("C-j" . ivy-next-line)
-	 ("C-k" . ivy-previous-line)
-	 :map ivy-switch-buffer-map
-	 ("C-k" . ivy-previous-line)
-	 ("C-l" . ivy-done)
-	 ("C-d" . ivy-switch-buffer-kill)
-	 :map ivy-reverse-i-search-map
-	 ("C-k" . ivy-previous-line)
-	 ("C-d" . ivy-reverse-i-search-kill))
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
   :config
   (ivy-mode 1))
 
@@ -186,8 +206,8 @@
 
 (use-package counsel
   :bind (("C-M-j" . 'counsel-switch-buffer)
-	 :map minibuffer-local-map
-	 ("C-r" . 'counsel-minibuffer-history))
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history))
   :custom
   (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
   :config
@@ -199,7 +219,7 @@
   (ivy-prescient-enable-filtering nil)
   :config
   ;; Uncomment the following line to have sorting remembered across sessions!
-					;(prescient-persist-mode 1)
+                                        ;(prescient-persist-mode 1)
   (ivy-prescient-mode 1))
 
 (use-package helpful
@@ -261,9 +281,15 @@
   (visual-line-mode 1))
 
 (setq org-base-path (expand-file-name
-                     (cond ((string-equal system-name "MACC02DC2DEMD6N") "~/org")
-                           ((string-equal system-name "MacBookPro") "~/MEGA/org")
+                     (cond ((string-equal (system-name) "MACC02DC2DEMD6N") "~/org")
+                           ((string-equal (system-name) "Emmanueles-MBP") "~/MEGA/org")
+                           ((string-equal (system-name) "yarnbaby")  "~/MEGA/org")
                            (t "~/MEGA/MEGA/org"))))
+
+(use-package org-super-agenda
+  :ensure t
+  :after org
+  :hook (org-mode . org-super-agenda-mode))
 
 (use-package org
   :pin org
@@ -280,13 +306,8 @@
                            "piano-log.org"
                            "work-log.org"
                            "Archive.org"
-                           "mybooks.org" ))
-  ;;(setq org-agenda-files
-  ;;      (list (format "%s/%s" org-base-path "Tasks.org")
-  ;;            (format "%s/%s" org-base-path "piano-log.org")
-  ;;            (format "%s/%s" org-base-path "work-log.org")
-  ;;            (format "%s/%s" org-base-path "Archive.org")
-  ;;            (format "%s/%s" org-base-path "mybooks.org")))
+                           "mybooks.org"
+                           "goals.org"))
 
   (require 'org-habit)
   (add-to-list 'org-modules 'org-habit)
@@ -305,74 +326,23 @@
   ;; Save Org buffers after refiling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
-
   (setq org-tag-alist
         '((:startgroup)
                                         ; Put mutually exclusive tags here
           (:endgroup)
-          ("@errand" . ?E)
+          ("Today" . ?t)
+          ("This Week" . ?w)
           ("@home" . ?H)
           ("@work" . ?W)
-          ("agenda" . ?a)
-          ("planning" . ?l)
-          ("note" . ?n)
-          ("idea" . ?i)
           ("Piano" . ?p)
-          ("studying" . ?s)
           (:startgroup)
-          ("reading" . ?r)
-          ("writing" . ?w)
+          ("read" . ?r)
+          ("write" . ?w)
+          ("study" . ?s)
           ("code" . ?c)
-          ("analysis" . ?z)
           (:endgroup)))
 
   ;; Configure custom agenda views
-  (setq org-agenda-custom-commands
-        '(("d" "Dashboard"
-           ((agenda "" ((org-deadline-warning-days 7)))
-            (todo "NEXT"
-                  ((org-agenda-overriding-header "Next Tasks")))
-            (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
-
-          ("n" "Next Tasks"
-           ((todo "NEXT"
-                  ((org-agenda-overriding-header "Next Tasks")))))
-
-          ("W" "Work Tasks" tags-todo "+work-email")
-
-          ;; Low-effort next actions
-          ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-           ((org-agenda-overriding-header "Low Effort Tasks")
-            (org-agenda-max-todos 20)
-            (org-agenda-files org-agenda-files)))
-
-          ("w" "Workflow Status"
-           ((todo "WAIT"
-                  ((org-agenda-overriding-header "Waiting on External")
-                   (org-agenda-files org-agenda-files)))
-            (todo "REVIEW"
-                  ((org-agenda-overriding-header "In Review")
-                   (org-agenda-files org-agenda-files)))
-            (todo "PLAN"
-                  ((org-agenda-overriding-header "In Planning")
-                   (org-agenda-todo-list-sublevels nil)
-                   (org-agenda-files org-agenda-files)))
-            (todo "BACKLOG"
-                  ((org-agenda-overriding-header "Project Backlog")
-                   (org-agenda-todo-list-sublevels nil)
-                   (org-agenda-files org-agenda-files)))
-            (todo "READY"
-
-                  (org-agenda-files org-agenda-files)))
-           (todo "ACTIVE"
-                 ((org-agenda-overriding-header "Active Projects")
-                  (org-agenda-files org-agenda-files)))
-           (todo "COMPLETED"
-                 ((org-agenda-overriding-header "Completed Projects")
-                  (org-agenda-files org-agenda-files)))
-           (todo "CANC"
-                 ((org-agenda-overriding-header "Cancelled Projects")
-                  (org-agenda-files org-agenda-files))))))
 
   (setq org-capture-templates
         `(("t" "Tasks / Projects")
@@ -406,9 +376,115 @@
   (define-key global-map (kbd "C-c s") (lambda () (interactive) (org-capture nil "s")))
   (efs/org-font-setup))
 
+;; Configure custom agenda views
+(setq org-agenda-custom-commands
+      '(("d" "Dashboard"
+         ((alltodo
+           ""
+           ((org-agenda-prefix-format "  %t  %s")
+            (org-agenda-overriding-header "CURRENT TASKS")
+            (org-super-agenda-groups
+             '((:name "Today"
+                      :todo "TODAY"
+                      :order 0)
+               (:name "Important"
+                      :priority "A"
+                      :order 1)
+               (:name "Next"
+                      :todo "NEXT"
+                      :order 2)
+               (:priority "B"
+                          :order 3)
+               (:name "This Week"
+                      :todo "THISWEEK"
+                      :order 3)
+               (:name "Work"
+                      :tag "@work"
+                      :order 4))
+             )))))
+      ("t" "Today's Tasks"
+       ((tags-todo
+         "GHD+ACTIVE+PRIORITY=\"A\""
+         ((org-agenda-overriding-header "Primary goals this month")))
+        (tags-todo
+         "GHD+ACTIVE+PRIORITY=\"C\""
+         ((org-agenda-overriding-header "Secondary goals this month")))
+        (tags-todo
+         "Today")
+        (agenda "" ((org-agenda-span 1)
+                    (org-agenda-overriding-header "Today")))))
+
+      ("w" "This Week's Tasks"
+       ((tags-todo
+         "GHD+ACTIVE+PRIORITY=\"A\""
+         ((org-agenda-files '("~/org/goals.org"))
+          (org-agenda-overriding-header "Primary goals this month")))
+        (tags-todo
+         "GHD+ACTIVE+PRIORITY=\"C\""
+         ((org-agenda-files '("~/org/goals.org"))
+          (org-agenda-overriding-header "Secondary goals this month")))
+        (agenda)))
+      ))
+
+
 (use-package org-books
+  :after org
   :config
   (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
+
+;; Configure custom agenda views
+;; (setq org-agenda-custom-commands
+;; '(("d" "Dashboard"
+;; ((agenda "" (
+;; (org-deadline-warning-days 7)
+;; (org-agenda-span 7)))
+
+;; (todo "NEXT"
+;;       ((org-agenda-overriding-header "Next Tasks")))
+;; (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))
+;; ))
+
+;; ("n" "Next Tasks"
+;;  ((todo "NEXT"
+;;         ((org-agenda-overriding-header "Next Tasks")))
+;;   (tags-todo "TODAY" ((org-agenda-overriding-header "Today Tasks")))))
+
+;; ("W" "Work Tasks" tags-todo "+work-email")
+
+;; Low-effort next actions
+;; ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+;; ((org-agenda-overriding-header "Low Effort Tasks")
+;; (org-agenda-max-todos 20)
+;; (org-agenda-files org-agenda-files)))
+
+;; ("w" "Workflow Status"
+;;  ((todo "WAIT"
+;;         ((org-agenda-overriding-header "Waiting on External")
+;;          (org-agenda-files org-agenda-files)))
+;;   (todo "REVIEW"
+;;         ((org-agenda-overriding-header "In Review")
+;;          (org-agenda-files org-agenda-files)))
+;;   (todo "PLAN"
+;;         ((org-agenda-overriding-header "In Planning")
+;;          (org-agenda-todo-list-sublevels nil)
+;;          (org-agenda-files org-agenda-files)))
+;;   (todo "BACKLOG"
+;;         ((org-agenda-overriding-header "Project Backlog")
+;;          (org-agenda-todo-list-sublevels nil)
+;;          (org-agenda-files org-agenda-files)))
+;;   (todo "READY"
+
+;;         (org-agenda-files org-agenda-files)))
+;;  (todo "ACTIVE"
+;;        ((org-agenda-overriding-header "Active Projects")
+;;         (org-agenda-files org-agenda-files)))
+;;  (todo "COMPLETED"
+;;        ((org-agenda-overriding-header "Completed Projects")
+;;         (org-agenda-files org-agenda-files)))
+;;  (todo "CANC"
+;;        ((org-agenda-overriding-header "Cancelled Projects")
+;;         (org-agenda-files org-agenda-files))))
+;; ))
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
@@ -416,7 +492,7 @@
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
+  (setq visual-fill-column-width 140
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1))
 
@@ -425,9 +501,9 @@
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t)
-      (python . t)))
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
 
   (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
@@ -455,30 +531,9 @@
 (use-package org-roam
   :ensure t
   :custom
-  (org-roam-directory (concat org-base-path "-roam"))
+  ;;(org-roam-directory (concat org-base-path "-roam"))
+  (org-roam-directory org-roam-base-path)
   (org-roam-completion-everywhere t)
-  (org-roam-capture-templates
-   '(("d" "default" plain
-      "%?"
-      :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-      :unnarrowed t)
-     ("m" "main" plain
-      "%?"
-      :if-new (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-      :immediate-finish t
-      :unnarrowed t)
-     ("b" "book notes" plain
-      "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
-      ;;        (file "~/org-roam/Templates/BookNoteTemplate.org")
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-      :immediate-finish t
-      :unnarrowed t)
-     ("u" "url notes" plain
-      "\n* Source\n\nURL: %^{URL}\nTitle: ${title}\n\n* Summary\n\n%?"
-      ;;        (file "~/org-roam/Templates/URLTemplate.org")
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-      :immediate-finish t
-      :unnarrowed t)))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert)
@@ -508,22 +563,54 @@
 
 (global-set-key (kbd "C-c n b") #'efs/org-roam-capture-fleeting)
 
-(use-package citar-org-roam
-  :after (citar org-roam)
-  :config (citar-org-roam-mode)
+(setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
+
+(use-package citar
+  :no-require
   :custom
-  (org-cite-global-bibliography '("~/org-roam/biblio.bib"))
+  (org-cite-global-bibliography bibliography-list)
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
-  (citar-bibliography '("~/org-roam/biblio.bib"))
-  (citar-notes-paths '("~/org-roam/reference"))
+  (citar-bibliography org-cite-global-bibliography)
+  (citar-notes-paths (list (format "%s/%s" org-roam-base-path "reference")))
   (citar-symbols
    `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
      (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
      (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
-  (citar-symbol-separator "  ")
-  )
+  (citar-symbol-separator "  "))
+
+(use-package citar-org-roam
+  :after (citar org-roam)
+  :config (citar-org-roam-mode))
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         "%?"
+         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+         :unnarrowed t)
+        ("m" "main" plain
+         "%?"
+         :target (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+         :immediate-finish t
+         :unnarrowed t)
+        ("b" "book notes" plain
+         "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+         ;;        (file "~/org-roam/Templates/BookNoteTemplate.org")
+         :target (file+head "reference/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+         :immediate-finish t
+         :unnarrowed t)
+        ("u" "url notes" plain
+         "\n* Source\n\nURL: %^{URL}\nTitle: ${title}\n\n* Summary\n\n%?"
+         ;;        (file "~/org-roam/Templates/URLTemplate.org")
+         :target (file+head "reference/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+         :immediate-finish t
+         :unnarrowed t)))
+
+(defun jethro/tag-new-node-as-draft ()
+  (org-roam-tag-add '("draft")))
+(add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+
 ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
 ;; for customizing the contents of a new note and no way to specify a custom
 ;; capture template. And the title template uses citar's own format, which means
@@ -532,6 +619,8 @@
 ;; Left with no other options, we override the
 ;; citar-org-roam--create-capture-note function and use our own template in it.
 
+(setq citar-org-roam-subdir "reference")
+
 (defun dh/citar-org-roam--create-capture-note (citekey entry)
   "Open or create org-roam node for CITEKEY and ENTRY."
   ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
@@ -539,11 +628,10 @@
                 citar-org-roam-note-title-template entry)))
     (org-roam-capture-
      :templates
-     '(("r" "reference" plain "%?" :if-new
-        (file+head
-         "%(concat
- (when citar-org-roam-subdir (concat citar-org-roam-subdir \"/\")) \"${citekey}.org\")"
-         "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
+     '(("n" "literature note" plain
+        "%?"
+        :target (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citekey}.org"
+                           "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
         :immediate-finish t
         :unnarrowed t))
      :info (list :citekey citekey)
@@ -555,6 +643,7 @@
 ;; returning a string. We could insert into a temporary buffer, but that seems
 ;; silly. Plus, we'd have to deal with trailing newlines that the function
 ;; inserts. Instead, we do a little copying and implement our own function.
+
 (defun dh/citar-get-bibtex (citekey)
   (let* ((bibtex-files
           (citar--bibliography-files))
@@ -571,37 +660,63 @@
 
 (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
 
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode)
-  (setq lsp-diagnostics-provider :none))
+;; (global-set-key (kbd "C-c n   l") #'citar-org-roam--create-capture-note)
+
+;; (defun efs/lsp-mode-setup ()
+;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+;;   (lsp-headerline-breadcrumb-mode)
+;;   (setq lsp-diagnostics-provider :none))
+
+;;  (use-package lsp-mode
+;;   :commands (lsp lsp-deferred)
+;;   :hook (lsp-mode . efs/lsp-mode-setup)
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+;;   :config
+;;   (lsp-enable-which-key-integration t))
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
+  :hook
+  (lsp-mode . lsp-enable-which-key-integration)
+  :custom
+  (lsp-diagnostic-provider :capf)
+  (lsp-headerline-breadcrumb-enable t)
+  (lsp-lens-enable nil)
+  (lsp-disabled-clients '((python-mode . pyls)))
   :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :config
-  (lsp-enable-which-key-integration t))
+  (setq lsp-keymap-prefix "C-c l"))
 
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
+  :after lsp-mode
   :custom
-  (lsp-ui-doc-position 'bottom))
+  (lsp-ui-doc-show-with-cursor nil)
+  :config
+  (setq lsp-ui-doc-position 'bottom))
 
 (use-package lsp-treemacs
-  :after lsp)
+  :after lsp-mode treemacs)
 
 (use-package lsp-ivy
-  :after lsp)
+  :after lsp-mode)
 
 (use-package flycheck
-   :ensure t
-   :config
-   ;;(add-hook 'python-mode-hook 'flycheck-mode))
-   (add-hook 'after-init-hook #'global-flycheck-mode))
+  :ensure t
+  :diminish flycheck-mode
+  :init
+  (setq flycheck-check-syntax-automatically '(save new-line)
+        flycheck-idle-change-delay 5.0
+        flycheck-display-errors-delay 0.9
+        flycheck-highlighting-mode 'symbols
+        flycheck-indication-mode 'left-fringe
+        flycheck-standard-error-navigation t 
+        flycheck-deferred-syntax-check nil)
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 
 (setq flycheck-flake8rc "/Users/emmanuelesalvati/.flake8")
+;;(add-hook 'python-mode-hook 'flycheck-mode))
 
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
@@ -617,9 +732,9 @@
 
   ;; Bind `C-c l d` to `dap-hydra` for easy access
   (general-define-key
-    :keymaps 'lsp-mode-map
-    :prefix lsp-keymap-prefix
-    "d" '(dap-hydra t :wk "debugger")))
+   :keymaps 'lsp-mode-map
+   :prefix lsp-keymap-prefix
+   "d" '(dap-hydra t :wk "debugger")))
 
 (use-package typescript-mode
   :mode "\\.ts\\'"
@@ -627,27 +742,70 @@
   :config
   (setq typescript-indent-level 2))
 
-(use-package python-mode
+(use-package lsp-pyright
   :ensure t
-  :hook ((python-mode . lsp-deferred)
-  (python-mode . hs-minor-mode))
-  :custom
-  ;; NOTE: Set these if Python 3 is called "python3" on your system!
-  ;; (python-shell-interpreter "python3")
-  ;; (dap-python-executable "python3")
-  (dap-python-debugger 'debugpy)
-  :config
-  (require 'dap-python))
+  :hook
+  (python-mode . (lambda ()
+                   (require 'lsp-pyright)
+                   (lsp-deferred))))
 
 (use-package pyvenv
-  :after python-mode
+  :ensure t
+  :init
+  (setenv "WORKON_HOME" "~/.pyenv/versions")
   :config
-  (pyvenv-mode 1))
+  (pyvenv-mode 1)
+  (setq pyvenv-post-activate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
+  (setq pyvenv-post-deactivate-hooks
+        (list (lambda ()
+                (setq python-shell-interpreter "python3")))))
+
+(use-package blacken
+  :init
+  (setq-default blacken-fast-unsafe t)
+  (setq-default blacken-line-length 88))
+
+;; (use-package python-mode
+;;   :ensure t
+;;   :hook ((python-mode . lsp-deferred)
+;;          (python-mode . hs-minor-mode))
+;;   :custom
+;;   ;; NOTE: Set these if Python 3 is called "python3" on your system!
+;;   ;; (python-shell-interpreter "python3")
+;;   ;; (dap-python-executable "python3")
+;;   (dap-python-debugger 'debugpy)
+;;   :config
+;;   (require 'dap-python))
+
+(use-package python-mode
+  :hook
+  (python-mode . pyvenv-mode)
+  (python-mode . flycheck-mode)
+  (python-mode . company-mode)
+  (python-mode . blacken-mode)
+  (python-mode . yas-minor-mode)
+  :custom
+  ;; NOTE: Set these if Python 3 is called "python3" on your system!
+  (python-shell-interpreter "python3")
+  :config)
+
+;; (use-package pyvenv
+  ;; :after python-mode
+  ;; :config
+  ;; (pyvenv-mode 1))
 
 (use-package yaml-mode
   :hook (yaml-mode . (lambda () (define-key yaml-mode-map "C-m" 'newline-and-indent)))
   :config
   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+
+(use-package auctex
+  :ensure t
+  :hook
+  (LaTeX-mode . turn-on-prettify-symbols-mode)
+  (LaTeX-mode . turn-on-flyspell))
 
 (use-package company
   :after lsp-mode
@@ -700,12 +858,15 @@
 (use-package dockerfile-mode
   :ensure t)
 
+(use-package yasnippet-snippets)
 (use-package yasnippet
-:ensure t
-:hook ((text-mode
-        prog-mode
-        conf-mode
-        snippet-mode) . yas-minor-mode-on))
+  :ensure t
+  ;; :diminish yas-minor-mode
+  :config (yas-reload-all)
+  :hook ((text-mode
+          prog-mode
+          conf-mode
+          snippet-mode) . yas-minor-mode-on))
 ;;:init
 ;;(setq yas-snippet-dir "~/.emacs.d/snippets"))
 
@@ -799,22 +960,8 @@
 (use-package dired-rsync
   :demand t
   :after dired
-  :bind (:map dired-mode-map ("r" . dired-rsync))
+  :bind (:map dired-mode-map ("C-x C-r" . dired-rsync))
   :config (add-to-list 'mode-line-misc-info '(:eval dired-rsync-modeline-status 'append)))
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(helm-minibuffer-history-key "M-p")
- '(package-selected-packages
-   '(dired-rsync dired-hide-dotfiles dired-open all-the-icons-dired dired-single eshell-git-prompt vterm eterm-256color yasnippet dockerfile-mode rainbow-delimiters evil-nerd-commenter forge magit counsel-projectile projectile company-box company yaml-mode pyvenv python-mode typescript-mode dap-mode flycheck lsp-ivy lsp-treemacs lsp-ui lsp-mode citar-org-roam org-roam visual-fill-column org-bullets org-books hydra helpful ivy-prescient which-key no-littering ivy-rich general evil-collection doom-themes doom-modeline counsel command-log-mode auto-package-update all-the-icons)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
