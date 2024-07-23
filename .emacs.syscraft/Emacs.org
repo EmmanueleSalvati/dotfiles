@@ -602,16 +602,16 @@ This section contains the basic configuration for =org-mode= plus the configurat
                           :order 2)
                    (:name "Medium Important"
                           :priority "B"
-                          :order 3)
+                          :order 5)
                    (:name "One Day"
                           :priority "C"
-                          :order 4)
+                          :order 6)
                    (:name "Work"
                           :tag "@work"
-                          :order 5)
+                          :order 3)
                    (:name "Chores"
                           :tag "chores"
-                          :order 6))
+                          :order 4))
                  )))))
             ("t" "Today's Tasks"
              ((tags-todo
