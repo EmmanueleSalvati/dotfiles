@@ -139,6 +139,18 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
 #+RESULTS:
 | .* | /Users/stallone/.emacs.syscraft/var/auto-save/ | t |
 
+Remove backup files from the same directory; instead, save them all in one spot
+
+#+begin_src emacs-lisp
+
+  (setq backup-by-copying t
+        backup-directory-alist '(("." . "~/.saves/"))
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)
+
+#+end_src
 * Basic UI Configuration
 
 This section configures basic UI settings that remove unneeded elements to make Emacs look a lot more minimal and modern.  If you're just getting started in Emacs, the menu bar might be helpful so you can remove the =(menu-bar-mode -1)= line if you'd like to still see that.
@@ -479,7 +491,8 @@ This section contains the basic configuration for =org-mode= plus the configurat
   (setq org-base-path (expand-file-name
                        (cond ((string-equal (system-name) "MACC02DC2DEMD6N") "~/org")
                              ((string-equal (system-name) "Emmanueles-MBP") "~/MEGA/org")
-                             ((string-equal (system-name) "yarnbaby")  "~/MEGA/org")
+                             ((string-equal (system-name) "yarnbaby")  "~/pCloudDrive/org")
+                             ((string-equal (system-name) "yarnmonster") "~/pCloudDrive/org")
                              (t "~/MEGA/MEGA/org"))))
 
   (use-package org-super-agenda
