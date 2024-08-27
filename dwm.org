@@ -1,0 +1,6 @@
+#+title dwm configuration
+
+* To change keybindings
+vim .config/arco-dwm/sxhkd/sxhkdrc
+
+There was the nasty M-f associated to variety

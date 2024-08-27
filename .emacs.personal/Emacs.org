@@ -1,1 +1,106 @@
-* Personal emacs configuration
+#+title: Personal emacs configuration
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.personal/init.el :mkdirp yes
+
+* Package System Setup
+#+begin_src emacs-lisp
+  (require 'package)
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
+
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+
+  (require 'use-package)
+  (setq use-package-always-ensure t)
+  
+#+end_src
+* Babel Languages
+
+#+begin_src emacs-lisp
+
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages
+     'org-babel-load-langagues '((emacs-lisp . t) (python . t)))
+
+    (push '("conf-unix" . conf-unix) org-src-lang-modes))
+
+#+end_src
+
+* Font and transparency
+
+These are basic font configurations
+
+#+begin_src emacs-lisp
+
+  (defvar es/default-font-size 100)
+  (defvar es/default-variable-font-size 100)
+  (when (eq system-type 'darwin)
+    (setq es/default-font-size 180
+	  es/default-variable-font-size 180))
+  (when (equal (system-name) "yarnbaby")
+    (setq es/default-font-size 150
+	  es/default-variable-font-size 150))
+  (defvar es/frame-transparency '(99 . 99))
+
+#+end_src
+
+#+begin_src emacs-lisp
+  (defun es/set-font-faces ()
+    (message "Setting font faces!")
+
+    (set-face-attribute 'default nil :font "Iosevka" :height es/default-font-size)
+    (set-face-attribute 'fixed-pitch nil :font "Iosevka" :height es/default-font-size)
+    (set-face-attribute 'variable-pitch nil :font "Iosevka" :height es/default-variable-font-size :weight 'regular))
+
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+		(lambda (frame)
+		  (setq doom-modeline-icon t)
+		  (with-selected-frame frame
+		    (es/set-font-faces))))
+    (es/set-font-faces))
+#+end_src
+
+* UI configuration
+
+** Basic stuff
+#+begin_src emacs-lisp
+  (setq visible-bell t)
+  (tooltip-mode -1)
+  (column-number-mode)
+  (set-frame-parameter (selected-frame) 'alpha es/frame-transparency)
+  (add-to-list 'default-frame-alist '(alpha . es/frame-transparency))
+  (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+  ;; Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+		  term-mode-hook
+		  shell-mode-hook
+		  treemacs-mode-hook
+		  eshell-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
+
+** Color theme
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :init (load-theme 'doom-palenight t))
+#+end_src
+
+* Which-key
+Useful UI panel for key bindings
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :defer 0
+    :diminish which-key-mode
+    :config
+    (which-key-mode)
+    (setq which-key-idle-delay 1))
+#+end_src
