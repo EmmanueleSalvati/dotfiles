@@ -6,7 +6,7 @@
   (require 'package)
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
+                           ("elpa" . "https://elpa.gnuff.org/packages/")))
 
   (package-initialize)
   (unless package-archive-contents
@@ -74,7 +74,7 @@ These are basic font configurations
   (tooltip-mode -1)
   (column-number-mode)
   (set-frame-parameter (selected-frame) 'alpha es/frame-transparency)
-  (add-to-list 'default-frame-alist '(alpha . es/frame-transparency))
+  (add-to-list 'default-frame-alist `(alpha . es/frame-transparency))
   (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
