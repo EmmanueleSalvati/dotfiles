@@ -112,6 +112,8 @@ Useful UI panel for key bindings
 
 * Helm
 
+** Basic Helm config
+
 #+begin_src emacs-lisp
   (use-package helm
     :config
@@ -120,6 +122,14 @@ Useful UI panel for key bindings
   (global-set-key (kbd "M-x") #'helm-M-x)
   (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
   (global-set-key (kbd "C-x C-f") #'helm-find-files)
+#+end_src
+
+** Helm Swoop instead of Isearch
+
+#+begin_src emacs-lisp
+  (use-package helm-swoop
+    :config
+    (global-set-key (kbd "C-s") #'helm-swoop))
 #+end_src
 
 * Magit
