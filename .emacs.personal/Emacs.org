@@ -2,11 +2,12 @@
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.personal/init.el :mkdirp yes
 
 * Package System Setup
+
 #+begin_src emacs-lisp
   (require 'package)
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnuff.org/packages/")))
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
 
   (package-initialize)
   (unless package-archive-contents
@@ -19,6 +20,7 @@
   (setq use-package-always-ensure t)
   
 #+end_src
+
 * Babel Languages
 
 #+begin_src emacs-lisp
@@ -69,6 +71,7 @@ These are basic font configurations
 * UI configuration
 
 ** Basic stuff
+
 #+begin_src emacs-lisp
   (setq visible-bell t)
   (tooltip-mode -1)
@@ -88,12 +91,14 @@ These are basic font configurations
 #+end_src
 
 ** Color theme
+
 #+begin_src emacs-lisp
   (use-package doom-themes
     :init (load-theme 'doom-palenight t))
 #+end_src
 
 * Which-key
+
 Useful UI panel for key bindings
 
 #+begin_src emacs-lisp
@@ -104,3 +109,60 @@ Useful UI panel for key bindings
     (which-key-mode)
     (setq which-key-idle-delay 1))
 #+end_src
+
+* Helm
+
+#+begin_src emacs-lisp
+  (use-package helm
+    :config
+    (helm-mode 1))
+
+  (global-set-key (kbd "M-x") #'helm-M-x)
+  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+  (global-set-key (kbd "C-x C-f") #'helm-find-files)
+#+end_src
+
+* Magit
+
+#+begin_src emacs-lisp
+
+  (use-package magit
+    :commands magit-status
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+  ;; NOTE: Make sure to configure a GitHub token before using this package!
+  ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+  ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+  (use-package forge
+    :after magit)
+
+#+end_src
+
+* Org Mode
+
+** Center Org Buffers
+
+visual-fill-column to center =org-mode= buffers
+
+#+begin_src emacs-lisp
+  (defun es/org-mode-visual-fill ()
+    (setq visual-fill-column-width 140
+	  visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (use-package visual-fill-column
+    :hook (org-mode . es/org-mode-visual-fill))
+#+end_src
+
+** Nicer Heading Bullets
+
+#+begin_src emacs-lisp
+
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+#+end_src
+
