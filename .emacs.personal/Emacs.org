@@ -24,6 +24,7 @@
 - [[#orderless][Orderless]]
   - [[#embark][Embark]]
 - [[#all-the-icons][All the Icons]]
+- [[#all-the-icons-completions][All the icons completions]]
 - [[#rainbow-mode-and-delimiters][Rainbow mode and delimiters]]
 - [[#doom-modeline][Doom modeline]]
 
@@ -338,26 +339,33 @@ Toolset that adds useful functionality to commands
 
 A completion style, copied from here: https://kristofferbalintona.me/posts/202202211546/
 #+begin_src emacs-lisp
-  (use-package orderless
-    :custom
-    (completion-styles '(orderless))      ; Use orderless
-    (completion-category-defaults nil)    ; I want to be in control!
-    (completion-category-overrides
-     '((file (styles basic-remote ; For `tramp' hostname completion with `vertico'
-		     orderless))))
-    (orderless-matching-styles
-     '(orderless-literal
-       orderlessn-prefixes
-       orderless-initialism
-       orderless-regexp
+;;  (use-package orderless)
+;;    :custom
+  ;;  (completion-styles '(orderless))      ; Use orderless
+    ;;(completion-category-defaults nil)    ; I want to be in control!
+    ;;(completion-category-overrides
+    ;; '((file (styles basic-remote ; For `tramp' hostname completion with `vertico'
+	;;	     orderless))))
+    ;;(orderless-matching-styles
+;;     '(orderless-literal
+;;       orderlessn-prefixes
+;;       orderless-initialism
+;;       orderless-regexp
        ;; orderless-flex                       ; Basically fuzzy finding
        ;; orderless-strict-leading-initialism
        ;; orderless-strict-initialism
        ;; orderless-strict-full-initialism
        ;; orderless-without-literal          ; Recommended for dispatches instead
-       )))
+;;       )))
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides '((file (styles basic partial-completion)))))
+
+#+end_src
 ** Embark
 
 #+begin_src emacs-lisp
@@ -376,6 +384,15 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
   :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
 #+end_src
 
+* All the icons completions
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons-completion
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+#+end_src
 * Rainbow mode and delimiters
 
 #+begin_src emacs-lisp
