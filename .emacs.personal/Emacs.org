@@ -19,14 +19,21 @@
   - [[#org-toc][Org TOC]]
   - [[#org-modern][Org modern]]
 - [[#vertico][Vertico]]
+- [[#vertico-posframe][Vertico posframe]]
 - [[#marginalia][Marginalia]]
 - [[#consult][Consult]]
 - [[#orderless][Orderless]]
-  - [[#embark][Embark]]
+  - [[#not-working][Not working]]
+  - [[#basic-working][Basic working]]
+- [[#embark][Embark]]
 - [[#all-the-icons][All the Icons]]
 - [[#all-the-icons-completions][All the icons completions]]
 - [[#rainbow-mode-and-delimiters][Rainbow mode and delimiters]]
 - [[#doom-modeline][Doom modeline]]
+- [[#corfu-mode][Corfu mode]]
+- [[#python-mode][Python mode]]
+  - [[#pyvenv][pyvenv]]
+  - [[#highlight-indent-guides][Highlight-indent-guides]]
 
 * Package System Setup
 
@@ -267,6 +274,15 @@ Useful for automatically expanding src code
   (setq vertico-cycle t))
 #+end_src
 
+* Vertico posframe
+
+To center the minibuffer
+#+begin_src emacs-lisp
+  (use-package vertico-posframe
+    :init
+    (vertico-posframe-mode 1))
+#+end_src
+
 * Marginalia
 
 Give more details to minibuffer commands
@@ -336,7 +352,7 @@ Toolset that adds useful functionality to commands
 #+end_src
 
 * Orderless
-
+** Not working
 A completion style, copied from here: https://kristofferbalintona.me/posts/202202211546/
 #+begin_src emacs-lisp
 ;;  (use-package orderless)
@@ -359,6 +375,7 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 ;;       )))
 #+end_src
 
+** Basic working
 #+begin_src emacs-lisp
   (use-package orderless
     :custom
@@ -366,7 +383,7 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
     (completion-category-overrides '((file (styles basic partial-completion)))))
 
 #+end_src
-** Embark
+* Embark
 
 #+begin_src emacs-lisp
   (use-package embark)
@@ -374,6 +391,7 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
     :hook
     (embark-collection-mode . consult-preview-at-point-mode))
 #+end_src
+
 * All the Icons
 
 #+begin_src emacs-lisp
@@ -411,3 +429,51 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
     :init (doom-modeline-mode 1))
 #+end_src
 
+* Corfu mode
+
+Implements completion at point
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :init (global-corfu-mode 1)
+    :custom
+    (setq corfu-cycle t
+	  corfu-auto t
+	  corfu-auto-prefix 2))
+#+end_src
+
+* Python mode
+
+#+begin_src emacs-lisp
+  (use-package python
+    :hook ((python-ts-mode . eglot-ensure))
+    :mode (("\\.py\\'" . python-ts-mode)))
+#+end_src
+
+** pyvenv
+
+#+begin_src emacs-lisp
+
+  (use-package pyvenv
+    :ensure t
+    :init
+    (setenv "WORKON_HOME" "~/.pyenv/versions")
+    :config
+    (pyvenv-mode 1)
+    (setq pyvenv-post-activate-hooks
+          (list (lambda ()
+                  (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
+    (setq pyvenv-post-deactivate-hooks
+          (list (lambda ()
+                  (setq python-shell-interpreter "python3")))))
+#+end_src
+
+** Highlight-indent-guides
+
+#+begin_src emacs-lisp
+  (use-package highlight-indent-guides
+    :hook (python-ts-mode . highlight-indent-guides)
+    :config
+    (set-face-foreground 'highlight-indent-guides-character-face "white")
+    (setq highlight-indent-guides-method 'character))
+#+end_src
