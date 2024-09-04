@@ -34,6 +34,7 @@
 - [[#python-mode][Python mode]]
   - [[#pyvenv][pyvenv]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
+- [[#eglot-bindings][Eglot bindings]]
 
 * Package System Setup
 
@@ -450,6 +451,8 @@ Implements completion at point
     :mode (("\\.py\\'" . python-ts-mode)))
 #+end_src
 
+Flymake-show-buffer-diagnostics shows the errors on the python file
+
 ** pyvenv
 
 #+begin_src emacs-lisp
@@ -477,4 +480,14 @@ Implements completion at point
     :config
     (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
     (setq highlight-indent-guides-method 'character))
+#+end_src
+
+* Eglot bindings
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :bind (:map eglot-mode-map
+		("C-c d" . eldoc)
+		("C-c a" . eglot-code-actions)
+		("C-c r" . eglot-rename)))
 #+end_src
