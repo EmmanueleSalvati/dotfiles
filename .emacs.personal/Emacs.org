@@ -1,39 +1,60 @@
 #+title: Personal emacs configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.personal/init.el :mkdirp yes
+#+auto_tangle: t
+
+* Table of Contents                                                     :TOC:
+- [[#package-system-setup][Package System Setup]]
+- [[#ui-configuration][UI configuration]]
+  - [[#font-and-transparency][Font and transparency]]
+  - [[#basic-stuff][Basic stuff]]
+  - [[#color-theme][Color theme]]
+  - [[#zooming-inout][Zooming in/out]]
+- [[#which-key][Which-key]]
+- [[#magit][Magit]]
+- [[#org-mode][Org Mode]]
+  - [[#center-org-buffers][Center Org Buffers]]
+  - [[#nicer-heading-bullets][Nicer Heading Bullets]]
+  - [[#org-auto-tangle][Org Auto-Tangle]]
+  - [[#org-tempo][Org Tempo]]
+  - [[#org-toc][Org TOC]]
+  - [[#org-modern][Org modern]]
+- [[#vertico][Vertico]]
+- [[#marginalia][Marginalia]]
+- [[#consult][Consult]]
+- [[#orderless][Orderless]]
+  - [[#embark][Embark]]
+- [[#all-the-icons][All the Icons]]
+- [[#rainbow-mode-and-delimiters][Rainbow mode and delimiters]]
+- [[#doom-modeline][Doom modeline]]
 
 * Package System Setup
 
 #+begin_src emacs-lisp
-  (require 'package)
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+	 (expand-file-name
+	  "straight/repos/straight.el/bootstrap.el"
+	  (or (bound-and-true-p straight-base-dir)
+	      user-emacs-directory)))
+	(bootstrap-version 7))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
 
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
 
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+  ;; Use straight.el for use-package expressions
+  (straight-use-package 'use-package)
 
-  (require 'use-package)
-  (setq use-package-always-ensure t)
-  
+  (setq straight-use-package-by-default t)
 #+end_src
 
-* Babel Languages
-
-#+begin_src emacs-lisp
-
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-     'org-babel-load-langagues '((emacs-lisp . t) (python . t)))
-
-    (push '("conf-unix" . conf-unix) org-src-lang-modes))
-
-#+end_src
-
-* Font and transparency
+* UI configuration
+** Font and transparency
 
 These are basic font configurations
 
@@ -68,8 +89,6 @@ These are basic font configurations
     (es/set-font-faces))
 #+end_src
 
-* UI configuration
-
 ** Basic stuff
 
 #+begin_src emacs-lisp
@@ -77,7 +96,7 @@ These are basic font configurations
   (tooltip-mode -1)
   (column-number-mode)
   (set-frame-parameter (selected-frame) 'alpha es/frame-transparency)
-  (add-to-list 'default-frame-alist `(alpha . es/frame-transparency))
+  (add-to-list 'default-frame-alist `(alpha . ,es/frame-transparency))
   (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -94,9 +113,20 @@ These are basic font configurations
 
 #+begin_src emacs-lisp
   (use-package doom-themes
-    :init (load-theme 'doom-palenight t))
+    :init (load-theme 'doom-palenight nil))
+  (use-package catppuccin-theme
+    :init (load-theme 'catppuccin :no-confirm))
+  (setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
+  (catppuccin-reload)
 #+end_src
 
+** Zooming in/out
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-+") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+  (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+  (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+#+end_src
 * Which-key
 
 Useful UI panel for key bindings
@@ -107,30 +137,41 @@ Useful UI panel for key bindings
     :diminish which-key-mode
     :config
     (which-key-mode)
-    (setq which-key-idle-delay 1))
+    (setq which-key-side-window-location 'bottom
+	  which-key-sort-order #'which-key-key-order
+	  which-key-allow-imprecise-window-fit nil
+	  which-key-sort-uppercase-first nil
+	  which-key-add-column-padding 1
+	  which-key-max-display-columns nil
+	  which-key-min-display-lines 6
+	  which-key-side-window-slot -10
+	  which-key-side-window-max-height 0.25
+	  which-key-idle-delay 0.8
+	  which-key-max-description-length 25
+	  which-key-separator " → " ))
 #+end_src
 
-* Helm
+# * Helm
 
-** Basic Helm config
+# ** Basic Helm config
 
-#+begin_src emacs-lisp
-  (use-package helm
-    :config
-    (helm-mode 1))
+# #+begin_src emacs-lisp
+#   (use-package helm
+#     :config
+#     (helm-mode 1))
 
-  (global-set-key (kbd "M-x") #'helm-M-x)
-  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-  (global-set-key (kbd "C-x C-f") #'helm-find-files)
-#+end_src
+#   (global-set-key (kbd "M-x") #'helm-M-x)
+#   (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+#   (global-set-key (kbd "C-x C-f") #'helm-find-files)
+# #+end_src
 
-** Helm Swoop instead of Isearch
+# ** Helm Swoop instead of Isearch
 
-#+begin_src emacs-lisp
-  (use-package helm-swoop
-    :config
-    (global-set-key (kbd "C-s") #'helm-swoop))
-#+end_src
+# #+begin_src emacs-lisp
+#   (use-package helm-swoop
+#     :config
+#     (global-set-key (kbd "C-s") #'helm-swoop))
+# #+end_src
 
 * Magit
 
@@ -174,5 +215,182 @@ visual-fill-column to center =org-mode= buffers
     :custom
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+#+end_src
+
+** Org Auto-Tangle
+
+Needs #+auto_tangle: t in the header
+
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :defer t
+    :hook (org-mode . org-auto-tangle-mode))
+#+end_src
+
+** Org Tempo
+
+Useful for automatically expanding src code
+
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :straight nil)
+#+end_src
+
+** Org TOC
+
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :commands toc-org-enable
+    :init (add-hook 'org-mode-hook 'toc-org-enable))
+#+end_src
+
+** Org modern
+#+begin_src emacs-lisp
+  (use-package org-modern)
+  (with-eval-after-load 'org (global-org-modern-mode))
+#+end_src
+* Vertico
+
+#+begin_src emacs-lisp
+(use-package vertico
+  :init
+  (vertico-mode)
+
+  ;; Show more candidates
+  (setq vertico-count 20)
+
+  ;; Grow and shrink the Vertico minibuffer
+  (setq vertico-resize t)
+
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  (setq vertico-cycle t))
+#+end_src
+
+* Marginalia
+
+Give more details to minibuffer commands
+
+#+begin_src emacs-lisp
+  ;; Enable rich annotations using the Marginalia package
+  (use-package marginalia
+    ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+    ;; available in the *Completions* buffer, add it to the
+    ;; `completion-list-mode-map'.
+    :bind (:map minibuffer-local-map
+	   ("M-A" . marginalia-cycle))
+
+    ;; The :init section is always executed.
+    :init
+
+    ;; Marginalia must be actived in the :init section of use-package such that
+    ;; the mode gets enabled right away. Note that this forces loading the
+    ;; package.
+    (marginalia-mode))
+#+end_src
+
+* Consult
+
+Toolset that adds useful functionality to commands
+
+#+begin_src emacs-lisp
+  (use-package consult
+    :ensure t
+    :after vertico
+    :bind (("C-x b"       . consult-buffer)
+	   ("C-x C-k C-k" . consult-kmacro)
+	   ("M-y"         . consult-yank-pop)
+	   ("M-g g"       . consult-goto-line)
+	   ("M-g M-g"     . consult-goto-line)
+	   ("M-g f"       . consult-flymake)
+	   ("M-g i"       . consult-imenu)
+	   ("M-s l"       . consult-line)
+	   ("M-s L"       . consult-line-multi)
+	   ("M-s u"       . consult-focus-lines)
+	   ("M-s g"       . consult-ripgrep)
+	   ("M-s M-g"     . consult-ripgrep)
+	   ("M-s f"       . consult-find)
+	   ("M-s M-f"     . consult-find)
+	   ("C-x C-SPC"   . consult-global-mark)
+	   ("C-x M-:"     . consult-complex-command)
+	   ("C-c n"       . consult-org-agenda)
+	   ("M-X"         . consult-mode-command)
+	   :map minibuffer-local-map
+	   ("M-r" . consult-history)
+	   :map Info-mode-map
+	   ("M-g i" . consult-info)
+	   :map org-mode-map
+	   ("M-g i"  . consult-org-heading))
+    :custom
+    (completion-in-region-function #'consult-completion-in-region)
+    :config
+    (recentf-mode t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package consult-dir
+    :ensure t
+    :bind (("C-x C-j" . consult-dir)
+	   :map vertico-map
+	   ("C-x C-j" . consult-dir)))
+#+end_src
+
+* Orderless
+
+A completion style, copied from here: https://kristofferbalintona.me/posts/202202211546/
+#+begin_src emacs-lisp
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless))      ; Use orderless
+    (completion-category-defaults nil)    ; I want to be in control!
+    (completion-category-overrides
+     '((file (styles basic-remote ; For `tramp' hostname completion with `vertico'
+		     orderless))))
+    (orderless-matching-styles
+     '(orderless-literal
+       orderlessn-prefixes
+       orderless-initialism
+       orderless-regexp
+       ;; orderless-flex                       ; Basically fuzzy finding
+       ;; orderless-strict-leading-initialism
+       ;; orderless-strict-initialism
+       ;; orderless-strict-full-initialism
+       ;; orderless-without-literal          ; Recommended for dispatches instead
+       )))
+#+end_src
+
+** Embark
+
+#+begin_src emacs-lisp
+  (use-package embark)
+  (use-package embark-consult
+    :hook
+    (embark-collection-mode . consult-preview-at-point-mode))
+#+end_src
+* All the Icons
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p))
+
+  (use-package all-the-icons-dired
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+#+end_src
+
+* Rainbow mode and delimiters
+
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook org-mode prog-mode)
+
+  (use-package rainbow-delimiters
+    :hook ((org-mode . rainbow-delimiters-mode)
+	   (prog-mode . rainbow-delimiters-mode)))
+#+end_src
+
+* Doom modeline
+
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1))
 #+end_src
 
