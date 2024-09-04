@@ -472,8 +472,9 @@ Implements completion at point
 
 #+begin_src emacs-lisp
   (use-package highlight-indent-guides
-    :hook (python-ts-mode . highlight-indent-guides)
+    :init
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
     :config
-    (set-face-foreground 'highlight-indent-guides-character-face "white")
+    (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
     (setq highlight-indent-guides-method 'character))
 #+end_src
