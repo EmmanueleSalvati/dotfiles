@@ -9,6 +9,7 @@
   - [[#basic-stuff][Basic stuff]]
   - [[#color-theme][Color theme]]
   - [[#zooming-inout][Zooming in/out]]
+  - [[#highlight-todo][Highlight TODO]]
 - [[#which-key][Which-key]]
 - [[#magit][Magit]]
 - [[#org-mode][Org Mode]]
@@ -18,6 +19,7 @@
   - [[#org-tempo][Org Tempo]]
   - [[#org-toc][Org TOC]]
   - [[#org-modern][Org modern]]
+  - [[#org-agenda][Org Agenda]]
 - [[#vertico][Vertico]]
 - [[#vertico-posframe][Vertico posframe]]
 - [[#marginalia][Marginalia]]
@@ -136,6 +138,24 @@ These are basic font configurations
   (global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
   (global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
 #+end_src
+
+** Highlight TODO
+Just to highlight some keywords
+
+#+begin_src emacs-lisp
+  (use-package hl-todo
+    :hook ((org-mode . hl-todo-mode)
+	   (prog-mode . hl-todo-mode))
+    :config
+    (setq hl-todo-highlight-punctuation ":"
+	  hl-todo-keyword-faces
+	  `(("TODO"       warning bold)
+	    ("FIXME"      error bold)
+	    ("HACK"       font-lock-constant-face bold)
+	    ("REVIEW"     font-lock-keyword-face bold)
+	    ("NOTE"       success bold)
+	    ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
 * Which-key
 
 Useful UI panel for key bindings
@@ -246,17 +266,22 @@ Useful for automatically expanding src code
 #+end_src
 
 ** Org TOC
-
 #+begin_src emacs-lisp
   (use-package toc-org
     :commands toc-org-enable
     :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
-
 ** Org modern
 #+begin_src emacs-lisp
   (use-package org-modern)
   (with-eval-after-load 'org (global-org-modern-mode))
+#+end_src
+
+** Org Agenda
+
+Here we go. Setup the agenda, trying to remove unnecessary stuff.
+#+begin_src emacs-lisp
+
 #+end_src
 * Vertico
 
@@ -321,7 +346,7 @@ Toolset that adds useful functionality to commands
 	   ("M-g M-g"     . consult-goto-line)
 	   ("M-g f"       . consult-flymake)
 	   ("M-g i"       . consult-imenu)
-	   ("M-s l"       . consult-line)
+	   ("C-s"         . consult-line)
 	   ("M-s L"       . consult-line-multi)
 	   ("M-s u"       . consult-focus-lines)
 	   ("M-s g"       . consult-ripgrep)
@@ -432,7 +457,7 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 
 * Corfu mode
 
-Implements completion at point
+Implements completion at point. TODO requires more study.
 
 #+begin_src emacs-lisp
   (use-package corfu
