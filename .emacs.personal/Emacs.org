@@ -24,15 +24,15 @@
 - [[#vertico-posframe][Vertico posframe]]
 - [[#marginalia][Marginalia]]
 - [[#consult][Consult]]
+- [[#corfu-mode][Corfu mode]]
 - [[#orderless][Orderless]]
-  - [[#not-working][Not working]]
   - [[#basic-working][Basic working]]
+  - [[#not-working][Not working]]
 - [[#embark][Embark]]
 - [[#all-the-icons][All the Icons]]
 - [[#all-the-icons-completions][All the icons completions]]
 - [[#rainbow-mode-and-delimiters][Rainbow mode and delimiters]]
 - [[#doom-modeline][Doom modeline]]
-- [[#corfu-mode][Corfu mode]]
 - [[#python-mode][Python mode]]
   - [[#pyvenv][pyvenv]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
@@ -123,8 +123,8 @@ These are basic font configurations
 ** Color theme
 
 #+begin_src emacs-lisp
-  (use-package doom-themes
-    :init (load-theme 'doom-palenight nil))
+;;  (use-package doom-themes
+  ;;  :init (load-theme 'doom-palenight nil))
   (use-package catppuccin-theme
     :init (load-theme 'catppuccin :no-confirm))
   (setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
@@ -237,6 +237,7 @@ visual-fill-column to center =org-mode= buffers
 
 ** Nicer Heading Bullets
 
+Do I even need this anymore?
 #+begin_src emacs-lisp
 
   (use-package org-bullets
@@ -281,8 +282,8 @@ Useful for automatically expanding src code
 
 Here we go. Setup the agenda, trying to remove unnecessary stuff.
 #+begin_src emacs-lisp
-
-#+end_src
+  (setq org-base-path (expand-file-name "~/pCloudDrive/org"))
+  #+end_src
 * Vertico
 
 #+begin_src emacs-lisp
@@ -377,9 +378,45 @@ Toolset that adds useful functionality to commands
 	   ("C-x C-j" . consult-dir)))
 #+end_src
 
+* Corfu mode
+
+Implements completion at point. TODO requires more study.
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :custom
+    (corfu-auto t)
+    (corfu-preselect 'directory)
+    :init (global-corfu-mode))
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :custom
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (tab-always-indent 'complete)
+
+    ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+    ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+    ;; setting is useful beyond Corfu.
+    (read-extended-command-predicate #'command-completion-default-include-p))
+#+end_src
+
 * Orderless
+** Basic working
+#+begin_src emacs-lisp
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion)))))
+ #+end_src
+
 ** Not working
+
+
 A completion style, copied from here: https://kristofferbalintona.me/posts/202202211546/
+
 #+begin_src emacs-lisp
 ;;  (use-package orderless)
 ;;    :custom
@@ -401,21 +438,13 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 ;;       )))
 #+end_src
 
-** Basic working
-#+begin_src emacs-lisp
-  (use-package orderless
-    :custom
-    (completion-styles '(orderless basic))
-    (completion-category-overrides '((file (styles basic partial-completion)))))
-
-#+end_src
 * Embark
 
 #+begin_src emacs-lisp
-  (use-package embark)
-  (use-package embark-consult
-    :hook
-    (embark-collection-mode . consult-preview-at-point-mode))
+ (use-package embark)
+ (use-package embark-consult
+   :hook
+   (embark-collection-mode . consult-preview-at-point-mode))
 #+end_src
 
 * All the Icons
@@ -455,18 +484,6 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
     :init (doom-modeline-mode 1))
 #+end_src
 
-* Corfu mode
-
-Implements completion at point. TODO requires more study.
-
-#+begin_src emacs-lisp
-  (use-package corfu
-    :init (global-corfu-mode 1)
-    :custom
-    (setq corfu-cycle t
-	  corfu-auto t
-	  corfu-auto-prefix 2))
-#+end_src
 
 * Python mode
 
