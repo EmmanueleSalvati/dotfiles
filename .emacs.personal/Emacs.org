@@ -36,6 +36,8 @@
 - [[#python-mode][Python mode]]
   - [[#pyvenv][pyvenv]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
+- [[#yaml-mode][YAML mode]]
+- [[#code-folding][Code folding]]
 - [[#eglot-bindings][Eglot bindings]]
 
 * Package System Setup
@@ -522,6 +524,29 @@ Flymake-show-buffer-diagnostics shows the errors on the python file
     :config
     (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
     (setq highlight-indent-guides-method 'character))
+#+end_src
+
+* YAML mode
+Define Yaml mode. TODO Need to change the key mapping.
+Need the treesitter yaml grammar installed:
+
+=npm install tree-sitter-yaml tree-sitter=
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :hook (yaml-mode . (lambda () (define-key yaml-mode-map "C-m" 'newline-and-indent)))
+    :config
+    (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+#+end_src
+
+
+* Code folding
+
+This looks useful:
+
+#+begin_src emacs-lisp
+  (use-package ts-fold
+    :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold"))
 #+end_src
 
 * Eglot bindings
