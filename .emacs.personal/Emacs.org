@@ -289,7 +289,7 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   			   "Archive.org"
   			   "mybooks.org"
   			   "goals.org")
-  	org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d!)" "CANC(k@)"))
+  	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "|" "DONE(d!)" "CANC(k@)"))
   	org-tag-alist '(("Today" . ?t)
   			("This Week" . ?w)
   			("@home" . ?H)
