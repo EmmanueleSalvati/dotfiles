@@ -19,6 +19,7 @@
   - [[#org-tempo][Org Tempo]]
   - [[#org-toc][Org TOC]]
   - [[#org-modern][Org Modern]]
+  - [[#org-agenda--capture][Org Agenda + Capture]]
   - [[#org-agenda][Org Agenda]]
 - [[#vertico][Vertico]]
 - [[#vertico-posframe][Vertico posframe]]
@@ -266,37 +267,51 @@ Useful for automatically expanding src code
   (with-eval-after-load 'org (global-org-modern-mode))
 #+end_src
 
-** Org Agenda
+** Org Agenda + Capture
 
 Here we go. Setup the agenda, trying to remove unnecessary stuff.
 #+begin_src emacs-lisp
   (setq org-base-path (expand-file-name "~/pCloudDrive/org"))
 
+  (define-key global-map (kbd "C-c c") #'org-capture)
+  (define-key global-map (kbd "C-c a") #'org-agenda)
+  (define-key global-map (kbd "C-c l") #'org-store-link)
+
   (use-package org
     :config
     (setq org-directory org-base-path
-	  org-agenda-files '("Tasks.org"
-			     "piano-log.org"
-			     "work-log.org"
-			     "Archive.org"
-			     "mybooks.org"
-			     "goals.org")
-	  org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d!)" "CANC(k@)"))
-	  org-tag-alist '(("Today" . ?t)
-			  ("This Week" . ?w)
-			  ("@home" . ?H)
-			  ("@work" . ?W)
-			  ("@phone" . ?P)
-			  ("piano" . ?p)
-			  (:startgroup)
-			  ("read" . ?r)
-			  ("write" . ?s)
-			  ("code" . ?c)
-			  ("errand" . ?e)
-			  (:endgroup)))
+  	  org-agenda-files '("Tasks.org"
+  			     "piano-log.org"
+  			     "work-log.org"
+  			     "Archive.org"
+  			     "mybooks.org"
+  			     "goals.org")
+  	  org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d!)" "CANC(k@)"))
+  	  org-tag-alist '(("Today" . ?t)
+  			  ("This Week" . ?w)
+  			  ("@home" . ?H)
+  			  ("@work" . ?W)
+  			  ("@phone" . ?P)
+  			  ("piano" . ?p)
+  			  (:startgroup)
+  			  ("read" . ?r)
+  			  ("write" . ?s)
+  			  ("code" . ?c)
+  			  ("errand" . ?e)
+  			  (:endgroup))
+  	  org-capture-templates
+  	  '(("t" "Tasks / Projects")
+  	    ("tt" "Task" entry
+  	     (file+olp "Tasks.org" "Personal Tasks")
+  	     "**TODO %?\n %U\n %a\n %i" :empty-lines 1))
+  	  )
     )
-
   #+end_src
+
+** Org Agenda
+Configure custom views
+
+
 * Vertico
 
 #+begin_src emacs-lisp
