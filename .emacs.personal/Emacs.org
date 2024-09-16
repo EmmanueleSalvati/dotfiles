@@ -1,6 +1,7 @@
 #+title: Personal emacs configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.personal/init.el :mkdirp yes
 #+auto_tangle: t
+#+STARTUP: show2levels
 
 * Table of Contents                                                     :TOC:
 - [[#package-system-setup][Package System Setup]]
@@ -209,7 +210,6 @@ Useful UI panel for key bindings
 #+end_src
 
 * Org Mode
-
 ** Center Org Buffers
 
 visual-fill-column to center =org-mode= buffers
@@ -280,38 +280,127 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   (use-package org
     :config
     (setq org-directory org-base-path
-  	  org-agenda-files '("Tasks.org"
-  			     "piano-log.org"
-  			     "work-log.org"
-  			     "Archive.org"
-  			     "mybooks.org"
-  			     "goals.org")
-  	  org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d!)" "CANC(k@)"))
-  	  org-tag-alist '(("Today" . ?t)
-  			  ("This Week" . ?w)
-  			  ("@home" . ?H)
-  			  ("@work" . ?W)
-  			  ("@phone" . ?P)
-  			  ("piano" . ?p)
-  			  (:startgroup)
-  			  ("read" . ?r)
-  			  ("write" . ?s)
-  			  ("code" . ?c)
-  			  ("errand" . ?e)
-  			  (:endgroup))
-  	  org-capture-templates
-  	  '(("t" "Tasks / Projects")
-  	    ("tt" "Task" entry
-  	     (file+olp "Tasks.org" "Personal Tasks")
-  	     "**TODO %?\n %U\n %a\n %i" :empty-lines 1))
-  	  )
-    )
+  	org-agenda-start-with-log-mode t
+  	org-log-done 'time
+  	org-log-into-drawer t
+  	org-agenda-files '("Tasks.org"
+  			   "piano-log.org"
+  			   "work-log.org"
+  			   "Archive.org"
+  			   "mybooks.org"
+  			   "goals.org")
+  	org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d!)" "CANC(k@)"))
+  	org-tag-alist '(("Today" . ?t)
+  			("This Week" . ?w)
+  			("@home" . ?H)
+  			("@work" . ?W)
+  			("@phone" . ?P)
+  			("piano" . ?p)
+  			(:startgroup)
+  			("read" . ?r)
+  			("write" . ?s)
+  			("code" . ?c)
+  			("errand" . ?e)
+  			(:endgroup))
+  	org-capture-templates
+  	'(("t" "Tasks / Projects")
+  	  ("tt" "Task" entry
+  	   (file+olp "Tasks.org" "Personal Tasks")
+  	   "**TODO %?\n %U\n %a\n %i" :empty-lines 1))))
   #+end_src
 
 ** Org Agenda
 Configure custom views
 
+#+begin_src emacs-lisp
+  (use-package org-super-agenda
+    :after org
+    :hook (org-mode . org-super-agenda-mode))
 
+  (setq org-agenda-custom-commands
+        '(("d" "Dashboard"
+  	 ((tags-todo
+  	   "GHD+ACTIVE+PRIORITY=\"A\""
+  	   ((org-agenda-prefix-format "   %t   %s")
+  	   (org-agenda-overriding-header "Primary goals this month")))
+  	  (tags-todo
+  	   "GHD+ACTIVE+PRIORITY=\"C\""
+  	   ((org-agenda-prefix-format "   %t   %s")
+  	    (org-agenda-overriding-header "Secondary goals this month")))
+  	
+  	  (alltodo
+  	   ""
+  	   ((org-agenda-prefix-format "   %t   %s")
+  	 
+  	   (org-agenda-overriding-header "ALL TASKS")
+  	    (org-super-agenda-groups '((:discard (:tag "GHD"))
+  				       (:name "Active"
+  					      :todo "ACTIVE"
+  					      :order 0)
+  				       (:name "Important"
+  					      :priority "A"
+  					      :order 1)
+  				       (:name "Work"
+  					      :tag "@work"
+  					      :order 2)
+  				       (:name "Errands"
+  					      :tag "errand"
+  					      :order 3)
+  				       (:name "Backlog"
+  					      :priority "<A"
+  					      :order 4)))))))
+  	  ("t" "Today's Tasks"
+  	     ((tags-todo
+  		"GHD+ACTIVE+PRIORITY=\"A\""
+  		((org-agenda-prefix-format "   %t   %s")
+  		 (org-agenda-overriding-header "Primary goals this month")))
+  	       (tags-todo
+  		"GHD+ACTIVE+PRIORITY=\"C\""
+  		((org-agenda-prefix-format "   %t   %s")
+  		 (org-agenda-overriding-header "Secondary goals this month")))
+  	       (tags-todo
+  		"Today"
+  		((org-agenda-prefix-format "   %t   %s")
+  		 (org-agenda-overriding-header "TO DO TODAY")
+  		 (org-super-agenda-groups '((:name "Work"
+  						   :tag "@work"
+  						   :order 0)
+  					    (:name "Piano"
+  						   :tag "Piano"
+  						   :order 1)
+  					    (:name "Errands"
+  						   :tag "errand")))))
+  	       (agenda "" ((org-agenda-span 1)
+  			   (org-agenda-overriding-header "Today")))))
+  	  
+  	  
+  		
+  	     ("w" "This Week's Tasks"
+  	      ((tags-todo
+  		"GHD+ACTIVE+PRIORITY=\"A\""
+  		((org-agenda-prefix-format "   %t   %s")
+  		 (org-agenda-overriding-header "Primary goals this month")))
+                 (tags-todo
+  		"GHD+ACTIVE+PRIORITY=\"C\""
+  		((org-agenda-prefix-format "   %t   %s")
+  		 (org-agenda-overriding-header "Secondary goals this month")))
+                 (tags-todo
+  		"This Week"
+  		((org-agenda-prefix-format "   %t   %s")
+  		 (org-agenda-overriding-header "This Week")
+  		 (org-super-agenda-groups '((:name "Work"
+  						   :tag "@work"
+  						   :order 0)
+  					    (:name "Piano"
+  						   :tag "Piano"
+  						   :order 1)
+  					    (:name "Errands"
+  						   :tag "errand"
+  						   :order 2)))))
+                 (agenda "" ((org-agenda-span 7)
+  			   (org-agenda-overriding-header "This week")))))
+  	     ))
+    #+end_src
 * Vertico
 
 #+begin_src emacs-lisp
@@ -567,8 +656,6 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 #   	(css-mode . css-ts-mode)
 #   	(python-mode . python-ts-mode)))
 # #+end_src
-
-
 * Python mode
 
 #+begin_src emacs-lisp
