@@ -306,7 +306,11 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   	'(("t" "Tasks / Projects")
   	  ("tt" "Task" entry
   	   (file+olp "Tasks.org" "Personal Tasks")
-  	   "**TODO %?\n %U\n %a\n %i" :empty-lines 1))))
+  	   "**TODO %?\n %U\n %a\n %i" :empty-lines 1)
+            ("tw" "Work Task" entry (file+olp "Tasks.org" "Work Tasks")
+           "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+
+  	  )))
   #+end_src
 
 ** Org Agenda
@@ -347,7 +351,7 @@ Configure custom views
   					      :tag "errand"
   					      :order 3)
   				       (:name "Backlog"
-  					      :priority "<A"
+  					      :priority<= "B"
   					      :order 4)))))))
   	  ("t" "Today's Tasks"
   	     ((tags-todo
@@ -372,9 +376,7 @@ Configure custom views
   						   :tag "errand")))))
   	       (agenda "" ((org-agenda-span 1)
   			   (org-agenda-overriding-header "Today")))))
-  	  
-  	  
-  		
+  	  		
   	     ("w" "This Week's Tasks"
   	      ((tags-todo
   		"GHD+ACTIVE+PRIORITY=\"A\""
