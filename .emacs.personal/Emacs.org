@@ -624,6 +624,8 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 #+begin_src emacs-lisp
   (use-package treesit-auto
     :demand t
+    :custom
+    (treesit-auto-install 'prompt)
     :config
     (global-treesit-auto-mode))
 
