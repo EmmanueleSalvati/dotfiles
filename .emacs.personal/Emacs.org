@@ -135,12 +135,23 @@ These are basic font configurations
 ** Color theme
 
 #+begin_src emacs-lisp
-;;  (use-package doom-themes
-  ;;  :init (load-theme 'doom-palenight nil))
-  (use-package catppuccin-theme
-    :init (load-theme 'catppuccin :no-confirm))
-  (setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
-  (catppuccin-reload)
+   (use-package doom-themes
+     ;; :init (load-theme 'doom-palenight t)
+     ;; Enable flashing mode-line on errors
+     :config
+     (doom-themes-visual-bell-config)
+     ;; Enable custom neotree theme (all-the-icons must be installed!)
+     (doom-themes-neotree-config)
+     ;; or for treemacs users
+     (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+     (doom-themes-treemacs-config)
+     ;; Corrects (and improves) org-mode's native fontification.
+     (doom-themes-org-config))
+
+  ;; (use-package catppuccin-theme
+  ;;     :init (load-theme 'catppuccin :no-confirm))
+  ;;   (setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
+  ;;   (catppuccin-reload)
 #+end_src
 
 ** Zooming in/out
@@ -307,10 +318,9 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   	  ("tt" "Task" entry
   	   (file+olp "Tasks.org" "Personal Tasks")
   	   "**TODO %?\n %U\n %a\n %i" :empty-lines 1)
-            ("tw" "Work Task" entry (file+olp "Tasks.org" "Work Tasks")
-           "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
-
-  	  )))
+            ("tw" "Work Task" entry
+  	   (file+olp "Tasks.org" "Work Tasks")
+           "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1))))
   #+end_src
 
 ** Org Agenda
