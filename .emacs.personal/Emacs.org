@@ -783,4 +783,6 @@ This looks useful:
   		 (display-buffer-reuse-window display-buffer-at-bottom)
   		 (reusable-frames . visible)
   		 (window-height . 0.3))))
+
+  (keymap-global-set "<f2>" 'vterm-toggle)
 #+end_src
