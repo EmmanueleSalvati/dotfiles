@@ -47,6 +47,7 @@
 - [[#eglot][Eglot]]
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
+- [[#dired-rsync][Dired-rsync]]
 
 * Package System Setup
 
@@ -785,4 +786,14 @@ This looks useful:
   		 (window-height . 0.3))))
 
   (keymap-global-set "<f2>" 'vterm-toggle)
+#+end_src
+
+* Dired-rsync
+
+#+begin_src emacs-lisp
+  (use-package dired-rsync
+    :bind (:map dired-mode-map ("C-c C-r" . dired-rsync)))
+
+  (use-package dired-rsync-transient
+    :bind (:map dired-mode-map ("C-c C-x" . dired-rsync-transient)))
 #+end_src
