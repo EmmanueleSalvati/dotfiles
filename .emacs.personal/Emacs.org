@@ -292,6 +292,7 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   	org-log-into-drawer t
   	org-agenda-files '("Tasks.org"
   			   "piano-log.org"
+  			   "piano.org"
   			   "work-log.org"
   			   "Archive.org"
   			   "mybooks.org"
