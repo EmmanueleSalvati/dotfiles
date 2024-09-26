@@ -360,7 +360,7 @@ Configure custom views
   				       (:name "Backlog"
   					      :priority<= "B"
   					      :order 4)))))))
-  	  ("t" "Today's Tasks"
+  	  ("T" "Today's Tasks"
   	     ((tags-todo
   		"GHD+ACTIVE+PRIORITY=\"A\""
   		((org-agenda-prefix-format "   %t   %s")
@@ -764,8 +764,10 @@ This looks useful:
 #+begin_src emacs-lisp
   (use-package vterm
     :config
-    (setq shell-file-name "/opt/homebrew/bin/zsh"
-  	vterm-max-scrollback 5000))
+    (setq vterm-max-scrollback 5000)
+    (if (eq system-type 'darwin)
+      (setq shell-file-name "/opt/homebrew/bin/zsh")
+      (setq shell-file-name "/usr/bin/zsh"))
   (define-key vterm-mode-map (kbd "C-c C-c") 'vterm--self-insert)
 #+end_src
 
