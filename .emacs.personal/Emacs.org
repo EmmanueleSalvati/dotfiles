@@ -767,7 +767,7 @@ This looks useful:
     (setq vterm-max-scrollback 5000)
     (if (eq system-type 'darwin)
       (setq shell-file-name "/opt/homebrew/bin/zsh")
-      (setq shell-file-name "/usr/bin/zsh"))
+      (setq shell-file-name "/usr/bin/zsh")))
   (define-key vterm-mode-map (kbd "C-c C-c") 'vterm--self-insert)
 #+end_src
 
