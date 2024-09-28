@@ -5,6 +5,8 @@
 
 * Table of Contents                                                     :TOC:
 - [[#package-system-setup][Package System Setup]]
+  - [[#setup-straightel][Setup Straight.el]]
+  - [[#debug-on-startup][Debug on Startup]]
 - [[#ui-configuration][UI configuration]]
   - [[#font-and-transparency][Font and transparency]]
   - [[#basic-stuff][Basic stuff]]
@@ -22,6 +24,7 @@
   - [[#org-modern][Org Modern]]
   - [[#org-agenda--capture][Org Agenda + Capture]]
   - [[#org-agenda][Org Agenda]]
+  - [[#org-roam][Org-Roam]]
 - [[#vertico][Vertico]]
 - [[#vertico-posframe][Vertico posframe]]
 - [[#marginalia][Marginalia]]
@@ -50,7 +53,7 @@
 - [[#dired-rsync][Dired-rsync]]
 
 * Package System Setup
-
+** Setup Straight.el
 #+begin_src emacs-lisp
   (defvar bootstrap-version)
   (let ((bootstrap-file
@@ -75,6 +78,10 @@
   (straight-use-package 'use-package)
 
   (setq straight-use-package-by-default t)
+#+end_src
+** Debug on Startup
+#+begin_src emacs-lisp
+  (setq debug-on-error t)
 #+end_src
 
 * UI configuration
@@ -260,6 +267,10 @@ Useful for automatically expanding src code
 #+begin_src emacs-lisp
   (use-package org-tempo
     :straight nil)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
 #+end_src
 
 ** Org TOC
@@ -317,7 +328,12 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   	   "** TODO %?\n %U\n %a\n %i" :empty-lines 1)
             ("tw" "Work Task" entry
   	   (file+olp "Tasks.org" "Work Tasks")
-           "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1))))
+             "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+  	  ("j" "Log Entries")
+  	  ("jp" "Piano Log Entry" entry (file+olp+datetree "piano-log.org")
+  	   "* %<%I:%M %p> - \n%?"
+  	   :empty-lines 1)
+  	  )))
   #+end_src
   
 ** Org Agenda
@@ -410,6 +426,151 @@ Configure custom views
   			   (org-agenda-overriding-header "This week")))))
   	     ))
     #+end_src
+** Org-Roam
+
+*** Basic config
+#+begin_src emacs-lisp
+  (setq org-roam-base-path (concat org-base-path "-roam"))
+  
+  (use-package org-roam
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+  	 ("C-c n f" . org-roam-node-find)
+  	 ("C-c n i" . org-roam-node-insert)
+  	 :map org-mode-map ("C-M-i" . completion-at-point))
+    :custom
+    (org-roam-directory org-roam-base-path)
+    (org-roam-completion-everywhere t)
+    :config
+    (org-roam-db-autosync-mode))
+
+    (with-eval-after-load 'org-roam
+    (cl-defmethod org-roam-node-type ((node org-roam-node))
+      "Return the TYPE of NODE."
+      (condition-case nil
+          (file-name-nondirectory
+           (directory-file-name
+            (file-name-directory
+             (file-relative-name (org-roam-node-file node) org-roam-directory))))
+        (error ""))))
+
+  (setq org-roam-node-display-template
+        (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+#+end_src
+
+
+*** Capture Templates
+#+begin_src emacs-lisp
+  (setq org-roam-capture-templates
+        '(("d" "default" plain
+           "%?"
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t)
+          ("m" "main" plain
+           "%?"
+           :target (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed t)
+          ("b" "book notes" plain
+           "\n* Source\n\nAuthor: %^{Author}\nTitle: ${title}\nYear: %^{Year}\n\n* Summary\n\n%?"
+           ;;        (file "~/org-roam/Templates/BookNoteTemplate.org")
+           :target (file+head "reference/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed t)
+          ("u" "url notes" plain
+           "\n* Source\n\nURL: %^{URL}\nTitle: ${title}\n\n* Summary\n\n%?"
+           ;;        (file "~/org-roam/Templates/URLTemplate.org")
+           :target (file+head "reference/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed t)))
+
+#+end_src
+
+Every zettel is a draft until declared otherwise:
+
+#+begin_src emacs-lisp
+
+  (defun jethro/tag-new-node-as-draft ()
+    (org-roam-tag-add '("draft")))
+  (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+#+end_src
+
+*** Bibliography
+#+begin_src emacs-lisp
+  (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
+
+  (use-package citar
+    :no-require
+    :custom
+    (org-cite-global-bibliography bibliography-list)
+    (org-cite-insert-processor 'citar)
+    (org-cite-follow-processor 'citar)
+    (org-cite-activate-processor 'citar)
+    (citar-bibliography org-cite-global-bibliography)
+    (citar-notes-paths (list (format "%s/%s" org-roam-base-path "reference")))
+    (citar-symbols
+     `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
+       (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
+       (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
+    (citar-symbol-separator "  "))
+
+  (use-package citar-org-roam
+    :after (citar org-roam)
+    :config (citar-org-roam-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
+  ;; for customizing the contents of a new note and no way to specify a custom
+  ;; capture template. And the title template uses citar's own format, which means
+  ;; we can't run arbitrary functions in it.
+  ;;
+  ;; Left with no other options, we override the
+  ;; citar-org-roam--create-capture-note function and use our own template in it.
+
+  (setq citar-org-roam-subdir "reference")
+
+  (defun dh/citar-org-roam--create-capture-note (citekey entry)
+    "Open or create org-roam node for CITEKEY and ENTRY."
+    ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
+    (let ((title (citar-format--entry
+                  citar-org-roam-note-title-template entry)))
+      (org-roam-capture-
+       :templates
+       '(("n" "literature note" plain
+          "%?"
+          :target (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citekey}.org"
+                             "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
+          :immediate-finish t
+          :unnarrowed t))
+       :info (list :citekey citekey)
+       :node (org-roam-node-create :title title)
+       :props '(:finalize find-file))
+      (org-roam-ref-add (concat "@" citekey))))
+
+  ;; citar has a function for inserting bibtex entries into a buffer, but none for
+  ;; returning a string. We could insert into a temporary buffer, but that seems
+  ;; silly. Plus, we'd have to deal with trailing newlines that the function
+  ;; inserts. Instead, we do a little copying and implement our own function.
+
+  (defun dh/citar-get-bibtex (citekey)
+    (let* ((bibtex-files
+            (citar--bibliography-files))
+           (entry
+            (with-temp-buffer
+              (bibtex-set-dialect)
+              (dolist (bib-file bibtex-files)
+                (insert-file-contents bib-file))
+              (bibtex-search-entry citekey)
+              (let ((beg (bibtex-beginning-of-entry))
+                    (end (bibtex-end-of-entry)))
+                (buffer-substring-no-properties beg end)))))
+      entry))
+
+  (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
+
+  ;; (global-set-key (kbd "C-c n   l") #'citar-org-roam--create-capture-note)
+#+end_src
+
 * Vertico
 
 #+begin_src emacs-lisp
@@ -482,7 +643,7 @@ Toolset that adds useful functionality to commands
 	   ("M-s M-f"     . consult-find)
 	   ("C-x C-SPC"   . consult-global-mark)
 	   ("C-x M-:"     . consult-complex-command)
-	   ("C-c n"       . consult-org-agenda)
+	   ;; ("C-c n"       . consult-org-agenda)
 	   ("M-X"         . consult-mode-command)
 	   :map minibuffer-local-map
 	   ("M-r" . consult-history)
