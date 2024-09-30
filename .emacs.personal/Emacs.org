@@ -335,7 +335,32 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   	   :empty-lines 1)
   	  )))
   #+end_src
-  
+
+*** Org-refile to datetree
+Very useful function to refile an entry in a datetree (e.g. piano-log.org) to a scheduled date (or TIMESTAMP or DEADLINE).
+Taken from here: [[https://stackoverflow.com/questions/26648731/refile-existing-entry-to-different-location-in-org-mode-date-tree][Stack overflow link]]
+
+#+begin_src emacs-lisp
+  (defun org-refile-to-datetree ()
+    "Refile a subtree to a datetree corresponding to it's timestamp."
+    (interactive)
+    (let* ((datetree-date (org-entry-get nil "SCHEDULED" t))
+           (date (org-date-to-gregorian datetree-date)))
+      (when date
+        (save-excursion
+          (org-cut-subtree)
+          (org-datetree-find-date-create date)
+          (org-narrow-to-subtree)
+          (show-subtree)
+          (org-end-of-subtree t)
+          (newline)
+          (goto-char (point-max))
+          (org-paste-subtree 4)
+          (widen)
+          )
+        )
+      ))
+#+end_src
 ** Org Agenda
 Configure custom views
 
