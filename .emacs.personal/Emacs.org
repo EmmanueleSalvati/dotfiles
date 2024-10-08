@@ -24,6 +24,7 @@
   - [[#org-modern][Org Modern]]
   - [[#org-agenda--capture][Org Agenda + Capture]]
   - [[#org-agenda][Org Agenda]]
+  - [[#org-books][Org-books]]
   - [[#org-roam][Org-Roam]]
 - [[#vertico][Vertico]]
 - [[#vertico-posframe][Vertico posframe]]
@@ -451,6 +452,14 @@ Configure custom views
   			   (org-agenda-overriding-header "This week")))))
   	     ))
     #+end_src
+** Org-books
+#+begin_src emacs-lisp
+  (use-package org-books
+    :after org
+    :config
+    (setq org-books-file (format "%s/%s" org-base-path "mybooks.org")))
+#+end_src
+
 ** Org-Roam
 
 *** Basic config
