@@ -23,6 +23,7 @@
   - [[#org-toc][Org TOC]]
   - [[#org-modern][Org Modern]]
   - [[#org-agenda--capture][Org Agenda + Capture]]
+  - [[#tag-faces][Tag faces]]
   - [[#org-agenda][Org Agenda]]
   - [[#org-books][Org-books]]
   - [[#org-roam][Org-Roam]]
@@ -290,7 +291,7 @@ Useful for automatically expanding src code
 
 Here we go. Setup the agenda, trying to remove unnecessary stuff.
 #+begin_src emacs-lisp
-  (setq org-base-path (expand-file-name "~/pCloudDrive/org"))
+  (setq org-base-path (expand-file-name "~/Documents/org"))
 
   (define-key global-map (kbd "C-c c") #'org-capture)
   (define-key global-map (kbd "C-c a") #'org-agenda)
@@ -299,42 +300,50 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   (use-package org
     :config
     (setq org-directory org-base-path
-  	org-agenda-start-with-log-mode t
-  	org-log-done 'time
-  	org-log-into-drawer t
-  	org-agenda-files '("Tasks.org"
-  			   "piano-log.org"
-  			   "piano.org"
-  			   "work-log.org"
-  			   "Archive.org"
-  			   "mybooks.org")
-    	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "|" "DONE(d!)" "CANC(k@/!)"))
-  	org-tag-alist '(("Today" . ?t)
-  			("This Week" . ?w)
-  			("@home" . ?H)
-  			("@work" . ?W)
-  			("@phone" . ?P)
-  			("piano" . ?p)
-  			(:startgroup)
-  			("read" . ?r)
-  			("write" . ?s)
-  			("code" . ?c)
-  			("errand" . ?e)
-  			(:endgroup))
-  	org-capture-templates
-  	'(("t" "Tasks / Projects")
-  	  ("tt" "Task" entry
-  	   (file+olp "Tasks.org" "Personal Tasks")
-  	   "** TODO %?\n %U\n %a\n %i" :empty-lines 1)
+    	org-agenda-start-with-log-mode t
+    	org-log-done 'time
+    	org-log-into-drawer t
+    	org-agenda-files '("Tasks.org"
+    			   "piano-log.org"
+    			   "piano.org"
+    			   "work-log.org"
+    			   "Archive.org"
+    			   "mybooks.org")
+      	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "|" "DONE(d!)" "CANC(k@/!)"))
+    	org-tag-alist '(("Today" . ?t)
+    			("This Week" . ?w)
+    			("@home" . ?H)
+    			("@work" . ?W)
+    			("@phone" . ?P)
+    			("piano" . ?p)
+    			(:startgroup)
+    			("read" . ?r)
+    			("write" . ?s)
+    			("code" . ?c)
+    			("errand" . ?e)
+    			(:endgroup))
+    	org-capture-templates
+    	'(("t" "Tasks / Projects")
+    	  ("tt" "Task" entry
+    	   (file+olp "Tasks.org" "Personal Tasks")
+    	   "** TODO %?\n %U\n %a\n %i" :empty-lines 1)
             ("tw" "Work Task" entry
-  	   (file+olp "Tasks.org" "Work Tasks")
+    	   (file+olp "Tasks.org" "Work Tasks")
              "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
-  	  ("j" "Log Entries")
-  	  ("jp" "Piano Log Entry" entry (file+olp+datetree "piano-log.org")
-  	   "* %<%I:%M %p> - \n%?"
-  	   :empty-lines 1)
-  	  )))
-  #+end_src
+    	  ("j" "Log Entries")
+    	  ("jp" "Piano Log Entry" entry (file+olp+datetree "piano-log.org")
+    	   "* %<%I:%M %p> - \n%?"
+    	   :empty-lines 1)
+    	  )))
+	  #+end_src
+
+** Tag faces
+This one does not seem to be working.
+#+begin_src emacs-lisp
+  (setq org-tag-faces '(("piano"     . (:foreground "forest green"  :weight bold))
+    		      ("This Week" . (:foreground "sienna"        :weight bold))
+    		      ("Today"     . (:foreground "yellow1"       :weight bold))))
+#+end_src
 
 *** Org-refile to datetree
 Very useful function to refile an entry in a datetree (e.g. piano-log.org) to a scheduled date (or TIMESTAMP or DEADLINE).
