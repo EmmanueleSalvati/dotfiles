@@ -24,7 +24,7 @@
   - [[#org-modern][Org Modern]]
   - [[#org-agenda--capture][Org Agenda + Capture]]
   - [[#tag-faces][Tag faces]]
-  - [[#org-agenda][Org Agenda]]
+  - [[#org-super-agenda][Org Super Agenda]]
   - [[#org-books][Org-books]]
   - [[#org-roam][Org-Roam]]
 - [[#vertico][Vertico]]
@@ -311,38 +311,39 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
     			   "mybooks.org")
       	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "|" "DONE(d!)" "CANC(k@/!)"))
     	org-tag-alist '(("Today" . ?t)
-    			("This Week" . ?w)
+    			("ThisWeek" . ?w)
     			("@home" . ?H)
     			("@work" . ?W)
-    			("@phone" . ?P)
+    			("@phone" . ?h)
     			("piano" . ?p)
+  			("pay" . ?P)
     			(:startgroup)
     			("read" . ?r)
     			("write" . ?s)
     			("code" . ?c)
     			("errand" . ?e)
     			(:endgroup))
-    	org-capture-templates
-    	'(("t" "Tasks / Projects")
-    	  ("tt" "Task" entry
-    	   (file+olp "Tasks.org" "Personal Tasks")
-    	   "** TODO %?\n %U\n %a\n %i" :empty-lines 1)
-            ("tw" "Work Task" entry
-    	   (file+olp "Tasks.org" "Work Tasks")
-             "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
-    	  ("j" "Log Entries")
-    	  ("jp" "Piano Log Entry" entry (file+olp+datetree "piano-log.org")
-    	   "* %<%I:%M %p> - \n%?"
-    	   :empty-lines 1)
+    	org-capture-templates '(("t" "Tasks / Projects")
+    				("tt" "Task" entry
+    				 (file+olp "Tasks.org" "Personal Tasks")
+    				 "** TODO %?\n %U\n %a\n %i" :empty-lines 1)
+
+  				("tw" "Work Task" entry
+    				 (file+olp "Tasks.org" "Work Tasks")
+  				 "** TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+
+    				("j" "Log Entries")
+    				("jp" "Piano Log Entry" entry (file+olp+datetree "piano-log.org")
+    				 "* %<%I:%M %p> - \n%?" :empty-lines 1)
     	  )))
 	  #+end_src
 
 ** Tag faces
 This one does not seem to be working.
 #+begin_src emacs-lisp
-  (setq org-tag-faces '(("piano"     . (:foreground "forest green"  :weight bold))
-    		      ("This Week" . (:foreground "sienna"        :weight bold))
-    		      ("Today"     . (:foreground "yellow1"       :weight bold))))
+  (setq org-tag-faces '(("piano" . (:foreground "forest green" :weight bold))
+    		      ("ThisWeek" . (:foreground "sienna" :weight bold))
+    		      ("Today" . (:foreground "yellow1" :weight bold))))
 #+end_src
 
 *** Org-refile to datetree
@@ -370,7 +371,7 @@ Taken from here: [[https://stackoverflow.com/questions/26648731/refile-existing-
         )
       ))
 #+end_src
-** Org Agenda
+** Org Super Agenda
 Configure custom views
 
 #+begin_src emacs-lisp
@@ -392,7 +393,7 @@ Configure custom views
   						      :tag "Today"
   						      :order 1)
   					       (:name "This Week"
-  						      :tag "This Week"
+  						      :tag "ThisWeek"
   						      :order 2)
   					       ))))))))
     #+end_src
