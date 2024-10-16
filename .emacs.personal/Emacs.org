@@ -464,11 +464,22 @@ Configure custom views
 
 #+end_src
 
+Fleeting notes, thanks to System Crafters:
+#+begin_src emacs-lisp
+  (defun es/org-roam-capture-fleeting ()
+    (interactive)
+    (org-roam-capture- :node (org-roam-node-create)
+                       :templates '(("f" "fleeting" plain "* %?"
+                                     :if-new (file+head "fleeting.org" "#+title: Fleeting note\n")))))
+
+  (global-set-key (kbd "C-c n b") #'es/org-roam-capture-fleeting)
+#+end_src
+
 Every zettel is a draft until declared otherwise:
 
 #+begin_src emacs-lisp
 
-  (defun jethro/tag-new-node-as-draft ()
+  (defun es/tag-new-node-as-draft ()
     (org-roam-tag-add '("draft")))
   (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
 #+end_src
