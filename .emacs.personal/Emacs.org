@@ -7,12 +7,14 @@
 - [[#package-system-setup][Package System Setup]]
   - [[#setup-straightel][Setup Straight.el]]
   - [[#debug-on-startup][Debug on Startup]]
+  - [[#keep-folders-clean][Keep folders clean]]
 - [[#ui-configuration][UI configuration]]
   - [[#font-and-transparency][Font and transparency]]
   - [[#basic-stuff][Basic stuff]]
   - [[#color-theme][Color theme]]
   - [[#zooming-inout][Zooming in/out]]
   - [[#highlight-todo][Highlight TODO]]
+- [[#dired][Dired]]
 - [[#which-key][Which-key]]
 - [[#magit][Magit]]
 - [[#org-mode][Org Mode]]
@@ -85,7 +87,23 @@
 #+begin_src emacs-lisp
   (setq debug-on-error t)
 #+end_src
+** Keep folders clean
+Thanks to System Crafters
+#+begin_src emacs-lisp
+  ;; temporary files, e.g. *~ files
+  (setq backup-directory-alist `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
 
+  ;; Auto save files
+  (make-directory (expand-file-name "tmp/auto-saves/" user-emacs-directory) t)
+
+  (setq auto-save-list-file-prefix (expand-file-name "tmp/auto-saves/sessions/" user-emacs-directory)
+        auto-save-file-name-transforms `((".*" ,(expand-file-name "tmp-auto-saves/" user-emacs-directory) t)))
+
+  ;; Lock files
+  ;; (setq create-lockfiles nil)
+
+  (use-package no-littering)
+#+end_src
 * UI configuration
 ** Font and transparency
 
@@ -145,18 +163,22 @@ These are basic font configurations
 ** Color theme
 
 #+begin_src emacs-lisp
-   (use-package doom-themes
-     :init (load-theme 'doom-Iosvkem)
-     ;; Enable flashing mode-line on errors
-     :config
-     (doom-themes-visual-bell-config)
-     ;; Corrects (and improves) org-mode's native fontification.
-     (doom-themes-org-config))
+  (use-package ef-themes
+    :config
+    (ef-themes-select 'ef-dream))
 
-  ;; (use-package catppuccin-theme
-  ;;     :init (load-theme 'catppuccin :no-confirm))
-  ;;   (setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
-  ;;   (catppuccin-reload)
+    ;;  (use-package doom-themes
+    ;;    :init (load-theme 'doom-Iosvkem)
+    ;;    ;; Enable flashing mode-line on errors
+    ;;    :config
+    ;;    (doom-themes-visual-bell-config)
+    ;;    ;; Corrects (and improves) org-mode's native fontification.
+    ;;    (doom-themes-org-config))
+
+    ;; (use-packa  ge catppuccin-theme
+    ;;     :init (load-theme 'catppuccin :no-confirm))
+    ;;   (setq catppuccin-flavor 'macchiato) ;; or 'latte, 'macchiato, or 'mocha
+    ;;   (catppuccin-reload)
 #+end_src
 
 ** Zooming in/out
@@ -183,6 +205,11 @@ Just to highlight some keywords
 	    ("REVIEW"     font-lock-keyword-face bold)
 	    ("NOTE"       success bold)
 	    ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+* Dired
+Dired jump key binding
+#+begin_src emacs-lisp
+  (define-key global-map (kbd "C-x j") #'dired-jump)
 #+end_src
 * Which-key
 
