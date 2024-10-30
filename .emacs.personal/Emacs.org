@@ -45,7 +45,7 @@
 - [[#exec-path-from-shell][exec-path-from-shell]]
 - [[#tree-sit-auto][Tree-sit auto]]
 - [[#tree-sitter-grammars][Tree-sitter grammars]]
-- [[#tree-sitter-ts-fold][Tree-sitter ts-fold]]
+- [[#treesit-fold][Treesit-fold]]
 - [[#python-mode][Python mode]]
   - [[#pyvenv][pyvenv]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
@@ -822,17 +822,21 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 #   	(css-mode . css-ts-mode)
 #   	(python-mode . python-ts-mode)))
 # #+end_src
-* Tree-sitter ts-fold
+
+* Treesit-fold
+This is a fork of ts-fold, which uses the native treesit.el instead of the old tree-sitter.
+This is the link: https://github.com/abougouffa/treesit-fold
 #+begin_src emacs-lisp
-  (use-package ts-fold
-    :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold"))
+  (use-package treesit-fold
+    :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold"))
+
 #+end_src
 * Python mode
 
 #+begin_src emacs-lisp
-;;  (use-package python
-;;    :hook ((python-ts-mode . eglot-ensure))
-;;    :mode (("\\.py\\'" . python-ts-mode)))
+   (use-package python
+     :hook ((python-ts-mode . eglot-ensure))
+     :mode (("\\.py\\'" . python-ts-mode)))
 #+end_src
 Flymake-show-buffer-diagnostics shows the errors on the python file
 
