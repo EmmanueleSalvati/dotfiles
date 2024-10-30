@@ -45,12 +45,11 @@
 - [[#exec-path-from-shell][exec-path-from-shell]]
 - [[#tree-sit-auto][Tree-sit auto]]
 - [[#tree-sitter-grammars][Tree-sitter grammars]]
-  - [[#remap-major-modes-into-tree-sitter-major-modes][Remap major modes into tree-sitter major-modes]]
+- [[#tree-sitter-ts-fold][Tree-sitter ts-fold]]
 - [[#python-mode][Python mode]]
   - [[#pyvenv][pyvenv]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
 - [[#yaml-mode][YAML mode]]
-- [[#code-folding][Code folding]]
 - [[#eglot][Eglot]]
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
@@ -811,7 +810,7 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 
 # #+end_src
 
-** Remap major modes into tree-sitter major-modes
+# ** Remap major modes into tree-sitter major-modes
 # #+begin_src emacs-lisp
 #   (setq major-mode-remap-alist
 #         '((yaml-mode . yaml-ts-mode)
@@ -822,6 +821,11 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
 #   	(css-mode . css-ts-mode)
 #   	(python-mode . python-ts-mode)))
 # #+end_src
+* Tree-sitter ts-fold
+#+begin_src emacs-lisp
+  (use-package ts-fold
+    :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold"))
+#+end_src
 * Python mode
 
 #+begin_src emacs-lisp
@@ -873,46 +877,45 @@ Need the treesitter yaml grammar installed:
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+end_src
 
-* Code folding
-
-This looks useful:
-
-# #+begin_src emacs-lisp
-#   (use-package ts-fold
-#     :straight (ts-fold :type git :host github :repo "emacs-tree-sitter/ts-fold"))
-# #+end_src
-
 * Eglot
 
 #+begin_src emacs-lisp
   (use-package eglot
-    :bind (:map eglot-mode-map
-  	      ("C-c d" . eldoc)
-  	      ("C-c a" . eglot-code-actions)
-  	      ("C-c r" . eglot-rename)
-  	      ("C-c f" . eglot-format-buffer))
-    :hook ((python-ts-mode . eglot-ensure)
-  	 (python-ts-mode . hs-minor-mode)
-  	 (python-ts-mode . flyspell-prog-mode)
-  	 (python-ts-mode . (lambda () (set-fill-column 88))))
     :config
-    (setq-default eglot-workspace-configuration
-  		'((:pylsp . (:configurationSources ["flake8"]
-  						   :plugins (
-  							     :pycodestyle ( :enabled :json-false)
-  							     :mccabe (:enabled :json-false)
-  							     :pyflakes (:enabled :json-false)
-  							     :flake8 (:enabled :json-false
-  									       :maxLineLength 88)
-  							     :ruff (:enabled t
-  									     :lineLength 88)
-  							     :pydocstyle (:enabled t
-  										   :convention "numpy")
-  							     :yapf (:enabled t :json-false)
-  							     :autopep8 (:enabled :json-false)
-  							     :black (:enabled t
-  									      :line_length 88
-  									      :cache_config t)))))))
+    (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("/Users/emmanuelesalvati/.pyenv/shims/pylsp")))
+    :hook
+    ((python-ts-mode . eglot-ensure)))
+#+end_src
+
+#+begin_src emacs-lisp
+  ;; (use-package eglot
+  ;;   :bind (:map eglot-mode-map
+  ;; 	      ("C-c d" . eldoc)
+  ;; 	      ("C-c a" . eglot-code-actions)
+  ;; 	      ("C-c r" . eglot-rename)
+  ;; 	      ("C-c f" . eglot-format-buffer))
+  ;;   :hook ((python-ts-mode . eglot-ensure)
+  ;; 	 (python-ts-mode . hs-minor-mode)
+  ;; 	 (python-ts-mode . flyspell-prog-mode)
+  ;; 	 (python-ts-mode . (lambda () (set-fill-column 88)))))
+    ;; :config
+    ;; (setq-default eglot-workspace-configuration
+    ;; 		'((:pylsp . (:configurationSources ["flake8"]
+    ;; 						   :plugins (
+    ;; 							     :pycodestyle ( :enabled :json-false)
+    ;; 							     :mccabe (:enabled :json-false)
+    ;; 							     :pyflakes (:enabled :json-false)
+    ;; 							     :flake8 (:enabled :json-false
+    ;; 									       :maxLineLength 88)
+    ;; 							     :ruff (:enabled t
+    ;; 									     :lineLength 88)
+    ;; 							     :pydocstyle (:enabled t
+    ;; 										   :convention "numpy")
+    ;; 							     :yapf (:enabled t :json-false)
+    ;; 							     :autopep8 (:enabled :json-false)
+    ;; 							     :black (:enabled t
+    ;; 									      :line_length 88
+    ;; 									      :cache_config t)))))))
 #+end_src
 
 * vterm
