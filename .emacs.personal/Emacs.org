@@ -54,6 +54,7 @@
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
 - [[#dired-rsync][Dired-rsync]]
+- [[#markdown][Markdown]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -957,4 +958,14 @@ Need the treesitter yaml grammar installed:
 
   (use-package dired-rsync-transient
     :bind (:map dired-mode-map ("C-c C-x" . dired-rsync-transient)))
+#+end_src
+
+* Markdown
+This requires multimarkdown installed on the machine, e.g. in MacOsX, =brew install multimarkdown=.
+The preview key-binding is =C-c C-c l=
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown"))
 #+end_src
