@@ -830,7 +830,10 @@ This is the link: https://github.com/abougouffa/treesit-fold
   (use-package treesit-fold
     :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold"))
 
+  (global-treesit-fold-indicators-mode 1)
+  (setq treesit-fold-indicators-fringe 'left-fringe)
 #+end_src
+
 * Python mode
 
 #+begin_src emacs-lisp
