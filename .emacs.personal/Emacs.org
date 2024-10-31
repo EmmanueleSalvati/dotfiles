@@ -828,7 +828,10 @@ This is a fork of ts-fold, which uses the native treesit.el instead of the old t
 This is the link: https://github.com/abougouffa/treesit-fold
 #+begin_src emacs-lisp
   (use-package treesit-fold
-    :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold"))
+    :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
+    :bind (:map treesit-fold-mode-map
+  	  ("C-c d" . treesit-fold-close)
+  	  ("C-c s" . treesit-fold-open)))
 
   (global-treesit-fold-indicators-mode 1)
   (setq treesit-fold-indicators-fringe 'left-fringe)
