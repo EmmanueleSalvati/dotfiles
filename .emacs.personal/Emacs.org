@@ -55,6 +55,7 @@
   - [[#vterm-toggle][vterm-toggle]]
 - [[#dired-rsync][Dired-rsync]]
 - [[#markdown][Markdown]]
+- [[#lilypond][Lilypond]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -978,4 +979,9 @@ The preview key-binding is =C-c C-c l=
   :ensure t
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown"))
+#+end_src
+
+* Lilypond
+#+begin_src emacs-lisp
+  (require 'lilypond-mode)
 #+end_src
