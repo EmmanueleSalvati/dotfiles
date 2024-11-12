@@ -54,6 +54,7 @@
 - [[#eglot][Eglot]]
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
+- [[#line-number-mode][Line number mode]]
 - [[#dired-rsync][Dired-rsync]]
 - [[#markdown][Markdown]]
 - [[#lilypond][Lilypond]]
@@ -966,6 +967,12 @@ Need the treesitter yaml grammar installed:
   (keymap-global-set "<f2>" 'vterm-toggle)
 #+end_src
 
+* Line number mode
+To display line numbers in programming modes:
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+#+end_src
+
 * Dired-rsync
 
 #+begin_src emacs-lisp
@@ -988,5 +995,6 @@ The preview key-binding is =C-c C-c l=
 
 * Lilypond
 #+begin_src emacs-lisp
-  (require 'lilypond-mode)
+  (unless (eq system-type 'darwin)
+    (require 'lilypond-mode))
 #+end_src
