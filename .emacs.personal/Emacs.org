@@ -441,7 +441,6 @@ Configure custom views
 #+end_src
 
 ** Org-Roam
-
 *** Basic config
 #+begin_src emacs-lisp
   (setq org-roam-base-path (concat org-base-path "-roam"))
@@ -471,6 +470,64 @@ Configure custom views
         (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
 #+end_src
 
+*** Bibliography
+Here things get a bit complex. This is the sequence:
+1. Use zotero and its BetterBibTex plugin to save org-roam/biblio.bib file
+   (hopefully automatically every time I use the zotero plugin from the browser).
+2. Use =citar= to read in that biblio.bib file
+3. Use =citar-org-roam= to link citar with org-roam and open an org-roam node every time I use =citar-open=.
+
+**** Citar configuration
+#+begin_src emacs-lisp
+  (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
+
+  (use-package citar
+    :no-require
+    :custom
+    (org-cite-global-bibliography bibliography-list)
+    (org-cite-insert-processor 'citar)
+    (org-cite-follow-processor 'citar)
+    (org-cite-activate-processor 'citar)
+    (citar-bibliography org-cite-global-bibliography)
+    (citar-notes-paths (list (format "%s/%s" org-roam-base-path "reference")))
+    (citar-symbols
+     `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
+       (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
+       (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
+    (citar-symbol-separator "  "))
+#+end_src
+
+**** citar-org-roam configuration
+#+begin_src emacs-lisp
+  (use-package citar-org-roam
+    :after (citar org-roam)
+    :config (citar-org-roam-mode))
+
+  (setq citar-org-roam-subdir "reference")
+  (setq citar-org-roam-note-title-template "${author} - ${title}")
+#+end_src
+
+citar has a function for inserting bibtex entries into a buffer, but none for
+returning a string. We could insert into a temporary buffer, but that seems
+silly. Plus, we'd have to deal with trailing newlines that the function
+inserts. Instead, we do a little copying and implement our own function.
+
+#+begin_src emacs-lisp
+  (defun es/citar-get-bibtex (citekey)
+    (interactive)
+    (let* ((bibtex-files
+            (citar--bibliography-files))
+           (entry
+            (with-temp-buffer
+              (bibtex-set-dialect)
+              (dolist (bib-file bibtex-files)
+                (insert-file-contents bib-file))
+              (bibtex-search-entry citekey)
+              (let ((beg (bibtex-beginning-of-entry))
+                    (end (bibtex-end-of-entry)))
+                (buffer-substring-no-properties beg end)))))
+      entry))
+#+end_src
 
 *** Capture Templates
 #+begin_src emacs-lisp
@@ -495,8 +552,13 @@ Configure custom views
            ;;        (file "~/org-roam/Templates/URLTemplate.org")
            :target (file+head "reference/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
            :immediate-finish t
-           :unnarrowed t)))
-
+           :unnarrowed t)
+  	("n" "literature note" plain
+  	 "%?"
+  	 :target (file+head "(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+  			    "#+title: ${title}\n\n#+begin_src bibtex\n%(es/citar-get-bibtex citar-citekey)\n#+end_src\n")
+  	 :unnarrowed t)
+  	))
 #+end_src
 
 Fleeting notes, thanks to System Crafters:
@@ -516,83 +578,65 @@ Every zettel is a draft until declared otherwise:
 
   (defun es/tag-new-node-as-draft ()
     (org-roam-tag-add '("draft")))
-  (add-hook 'org-roam-capture-new-node-hook #'jethro/tag-new-node-as-draft)
+  (add-hook 'org-roam-capture-new-node-hook #'es/tag-new-node-as-draft)
 #+end_src
 
-*** Bibliography
-#+begin_src emacs-lisp
-  (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
-
-  (use-package citar
-    :no-require
-    :custom
-    (org-cite-global-bibliography bibliography-list)
-    (org-cite-insert-processor 'citar)
-    (org-cite-follow-processor 'citar)
-    (org-cite-activate-processor 'citar)
-    (citar-bibliography org-cite-global-bibliography)
-    (citar-notes-paths (list (format "%s/%s" org-roam-base-path "reference")))
-    (citar-symbols
-     `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
-       (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
-       (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
-    (citar-symbol-separator "  "))
-
-  (use-package citar-org-roam
-    :after (citar org-roam)
-    :config (citar-org-roam-mode))
-#+end_src
+Use citar-modified capture template for literature notes:
 
 #+begin_src emacs-lisp
-  ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
-  ;; for customizing the contents of a new note and no way to specify a custom
-  ;; capture template. And the title template uses citar's own format, which means
-  ;; we can't run arbitrary functions in it.
-  ;;
-  ;; Left with no other options, we override the
-  ;; citar-org-roam--create-capture-note function and use our own template in it.
-
-  (setq citar-org-roam-subdir "reference")
-
-  (defun dh/citar-org-roam--create-capture-note (citekey entry)
-    "Open or create org-roam node for CITEKEY and ENTRY."
-    ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
-    (let ((title (citar-format--entry
-                  citar-org-roam-note-title-template entry)))
-      (org-roam-capture-
-       :templates
-       '(("n" "literature note" plain
-          "%?"
-          :target (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citekey}.org"
-                             "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
-          :immediate-finish t
-          :unnarrowed t))
-       :info (list :citekey citekey)
-       :node (org-roam-node-create :title title)
-       :props '(:finalize find-file))
-      (org-roam-ref-add (concat "@" citekey))))
-
-  ;; citar has a function for inserting bibtex entries into a buffer, but none for
-  ;; returning a string. We could insert into a temporary buffer, but that seems
-  ;; silly. Plus, we'd have to deal with trailing newlines that the function
-  ;; inserts. Instead, we do a little copying and implement our own function.
-
-  (defun dh/citar-get-bibtex (citekey)
-    (let* ((bibtex-files
-            (citar--bibliography-files))
-           (entry
-            (with-temp-buffer
-              (bibtex-set-dialect)
-              (dolist (bib-file bibtex-files)
-                (insert-file-contents bib-file))
-              (bibtex-search-entry citekey)
-              (let ((beg (bibtex-beginning-of-entry))
-                    (end (bibtex-end-of-entry)))
-                (buffer-substring-no-properties beg end)))))
-      entry))
-
-  (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
+  (setq citar-org-roam-capture-template-key "n")
 #+end_src
+
+# #+begin_src emacs-lisp
+#   ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
+#   ;; for customizing the contents of a new note and no way to specify a custom
+#   ;; capture template. And the title template uses citar's own format, which means
+#   ;; we can't run arbitrary functions in it.
+#   ;;
+#   ;; Left with no other options, we override the
+#   ;; citar-org-roam--create-capture-note function and use our own template in it.
+
+#   (setq citar-org-roam-subdir "reference")
+
+#   (defun dh/citar-org-roam--create-capture-note (citekey entry)
+#     "Open or create org-roam node for CITEKEY and ENTRY."
+#     ;; adapted from https://jethrokuan.github.io/org-roam-guide/#orgc48eb0d
+#     (let ((title (citar-format--entry
+#                   citar-org-roam-note-title-template entry)))
+#       (org-roam-capture-
+#        :templates
+#        '(("n" "literature note" plain
+#           "%?"
+#           :target (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citekey}.org"
+#                              "#+title: ${title}\n\n#+begin_src bibtex\n%(dh/citar-get-bibtex citekey)\n#+end_src\n")
+#           :immediate-finish t
+#           :unnarrowed t))
+#        :info (list :citekey citekey)
+#        :node (org-roam-node-create :title title)
+#        :props '(:finalize find-file))
+#       (org-roam-ref-add (concat "@" citekey))))
+
+#   ;; citar has a function for inserting bibtex entries into a buffer, but none for
+#   ;; returning a string. We could insert into a temporary buffer, but that seems
+#   ;; silly. Plus, we'd have to deal with trailing newlines that the function
+#   ;; inserts. Instead, we do a little copying and implement our own function.
+
+#   (defun dh/citar-get-bibtex (citekey)
+#     (let* ((bibtex-files
+#             (citar--bibliography-files))
+#            (entry
+#             (with-temp-buffer
+#               (bibtex-set-dialect)
+#               (dolist (bib-file bibtex-files)
+#                 (insert-file-contents bib-file))
+#               (bibtex-search-entry citekey)
+#               (let ((beg (bibtex-beginning-of-entry))
+#                     (end (bibtex-end-of-entry)))
+#                 (buffer-substring-no-properties beg end)))))
+#       entry))
+
+#   (advice-add #'citar-org-roam--create-capture-note :override #'dh/citar-org-roam--create-capture-note)
+# #+end_src
 
 #+RESULTS:
 
