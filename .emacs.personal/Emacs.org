@@ -168,7 +168,7 @@ These are basic font configurations
 #+begin_src emacs-lisp
   (use-package ef-themes
     :config
-    (ef-themes-select 'ef-frost))
+    (ef-themes-select 'ef-bio))
   ;; was ef-dream
 
     ;;  (use-package doom-themes
@@ -918,13 +918,15 @@ Flymake-show-buffer-diagnostics shows the errors on the python file
 
 ** Highlight-indent-guides
 
+NOTE Had to disable this because it messes with the fonts when I do code folding using treesit-fold. Have to debug before I can use it again.
+
 #+begin_src emacs-lisp
-  (use-package highlight-indent-guides
-    :init
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-    :config
-    (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
-    (setq highlight-indent-guides-method 'character))
+  ;; (use-package highlight-indent-guides
+  ;;   :init
+  ;;   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  ;;   :config
+  ;;   (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
+  ;;   (setq highlight-indent-guides-method 'fill))
 #+end_src
 
 * YAML mode
