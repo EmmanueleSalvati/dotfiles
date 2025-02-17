@@ -343,6 +343,7 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
     			   "piano.org"
     			   "work-log.org"
     			   "Archive.org"
+  			 "chess-analysis.org"
     			   "mybooks.org")
       	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "|" "DONE(d!)" "CANC(k@/!)"))
     	org-tag-alist '(("Today" . ?t)
