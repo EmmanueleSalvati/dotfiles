@@ -168,7 +168,7 @@ These are basic font configurations
 #+begin_src emacs-lisp
   (use-package ef-themes
     :config
-    (ef-themes-select 'ef-bio))
+    (ef-themes-select 'ef-day))
   ;; was ef-dream
 
     ;;  (use-package doom-themes
@@ -905,7 +905,7 @@ Flymake-show-buffer-diagnostics shows the errors on the python file
   (use-package pyvenv
     :ensure t
     :init
-    (setenv "WORKON_HOME" "~/.pyenv/versions")
+    (setenv "WORKON_HOME" "~/.uvenv")
     :config
     (pyvenv-mode 1)
     (setq pyvenv-post-activate-hooks
@@ -947,13 +947,19 @@ Need the treesitter yaml grammar installed:
 #+begin_src emacs-lisp
   (use-package eglot
     :config
-    (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("/Users/emmanuelesalvati/.pyenv/shims/pylsp")))
+    (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("ruff" "server")))
+    ;; (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("/Users/emmanuelesalvati/.uvenv/prep-shared-py3.11/bin/pylsp")))
     :hook
     ((python-ts-mode . eglot-ensure))
     :config
     (setq-default eglot-workspace-configuration
   		'((:pylsp . (:plugins
-  			     (:ruff (:enabled t) :pycodestyle (:enabled :json-false)))))))
+  			     (:ruff (:enabled t
+  					      :lineLength 88
+  					      :select "F"
+  					      :ignore "D210"
+  					      :preview t) ))
+  			  ))))
 #+end_src
 
 #+begin_src emacs-lisp
