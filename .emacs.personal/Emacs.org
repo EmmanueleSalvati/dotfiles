@@ -417,9 +417,14 @@ Configure custom views
 
   (setq org-agenda-custom-commands
         '(("d" "Dashboard"
-  	 ((alltodo ""
+  	 (
+  	  (agenda ""
+  		  ((org-agenda-remove-tags t)
+  		   (org-agenda-span 7)
+  		   ))
+  	  (alltodo ""
   		   ((org-agenda-prefix-format "   %t   %s")
-  		    
+
   		    (org-agenda-overriding-header "ALL TASKS")
   		    (org-super-agenda-groups '(
   					       (:name "Active"
