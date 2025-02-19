@@ -956,15 +956,19 @@ Need the treesitter yaml grammar installed:
     (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("ruff" "server")))
     ;; (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("/Users/emmanuelesalvati/.uvenv/prep-shared-py3.11/bin/pylsp")))
     :hook
-    ((python-ts-mode . eglot-ensure))
+    ((python-ts-mode . eglot-ensure)
+     (python-mode . eglot-ensure))
     :config
     (setq-default eglot-workspace-configuration
   		'((:pylsp . (:plugins
-  			     (:ruff (:enabled t
+  			     (:pycodestyle (:enabled :json-false)
+  			      :ruff (:enabled t
+  					      :formatEnabled t
   					      :lineLength 88
   					      :select "F"
   					      :ignore "D210"
-  					      :preview t) ))
+  					      :preview t
+  					      :codeAction t) ))
   			  ))))
 #+end_src
 
