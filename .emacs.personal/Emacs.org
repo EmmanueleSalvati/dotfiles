@@ -58,6 +58,7 @@
 - [[#dired-rsync][Dired-rsync]]
 - [[#markdown][Markdown]]
 - [[#lilypond][Lilypond]]
+- [[#treemacs][Treemacs]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -1064,4 +1065,21 @@ The preview key-binding is =C-c C-c l=
 #+begin_src emacs-lisp
   (unless (eq system-type 'darwin)
     (require 'lilypond-mode))
+#+end_src
+* Treemacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+      :ensure t
+      :defer t
+      :init
+      (with-eval-after-load 'winum
+        (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+      :config
+      (treemacs-follow-mode t))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once)
+    :ensure t)
 #+end_src
