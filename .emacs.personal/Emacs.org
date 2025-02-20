@@ -59,6 +59,7 @@
 - [[#markdown][Markdown]]
 - [[#lilypond][Lilypond]]
 - [[#treemacs][Treemacs]]
+- [[#winum][Winum]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -1082,4 +1083,15 @@ The preview key-binding is =C-c C-c l=
   (use-package treemacs-icons-dired
     :hook (dired-mode . treemacs-icons-dired-enable-once)
     :ensure t)
+#+end_src
+
+* Winum
+Window numbering switch. kbd is "C-x w <n>"
+Or, if you have treemacs open "M-0" to select the treemacs tab.
+
+#+begin_src emacs-lisp
+  (use-package winum
+    :ensure t
+    :config
+    (winum-mode t))
 #+end_src
