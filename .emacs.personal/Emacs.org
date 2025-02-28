@@ -340,32 +340,20 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
     	org-agenda-start-with-log-mode t
     	org-log-done 'time
     	org-log-into-drawer t
-    	org-agenda-files '("Tasks.org"
-    			   "piano-log.org"
-    			   "piano.org"
-    			   "work-log.org"
-    			   "Archive.org"
-  			   "chess-analysis.org"
-    			   "mybooks.org")
-      	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "|" "DONE(d!)" "CANC(k@/!)"))
-    	org-tag-alist '(("Today" . ?t)
-    			("ThisWeek" . ?w)
-    			("@home" . ?H)
-    			("@work" . ?W)
-    			("@phone" . ?h)
-  			("chess" . ?C)
-    			("piano" . ?p)
-  			("pay" . ?P)
-  			("recurring" . ?R)
-  			("activate" . ?a)
-    			(:startgroup)
-    			("read" . ?r)
-    			("write" . ?s)
-  			("study" . ?S)
-    			("code" . ?c)
-  			("training" . ?T)
-    			("errand" . ?e)
-    			(:endgroup))
+    	org-agenda-files '("Tasks.org" "piano-log.org" "piano.org" "work-log.org"
+    			   "Archive.org" "chess-analysis.org" "mybooks.org")
+      	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "BLOCKED(b)" "|"
+  				      "DONE(d!)" "CANC(k@/!)"))
+    	org-tag-alist '(("Today" . ?t) ("ThisWeek" . ?w) ("@work" . ?W)
+    			("@phone" . ?h) ("recurring" . ?R)
+  			(:startgroup . nil)
+  			("errand" . ?e) ("chess" . ?C) ("piano" . ?p) ("study" . ?S)
+  			(:endgroup . nil)
+  			("activate" . ?a) ("training" . ?T)
+  			("scales" . ?g) ("tune" . ?u) ("rhythm" . ?y) ("ear" . ?E) ("misc" . ?m)
+  			("ai" . ?A) ("music" . nil)
+  			("gifts" . nil) ("plan" . nil)
+    			("read" . ?r) ("write" . ?s) ("code" . ?c))
     	org-capture-templates '(("t" "Tasks / Projects")
     				("tt" "Task" entry
     				 (file+olp "Tasks.org" "Personal Tasks")
@@ -468,8 +456,7 @@ Configure custom views
   						 ))))))
   	("p" "Piano"
   	 ((tags-todo "piano"
-  		     (
-  		      (org-agenda-overriding-header "PIANO")
+  		     ((org-agenda-overriding-header "PIANO")
   		      (org-agenda-remove-tags t)
   		      (org-super-agenda-groups '((:name "Scales" :tag "scales" :order 0)
   						 (:name "Tunes" :tag "tune" :order 1)
@@ -479,8 +466,7 @@ Configure custom views
   						 ))))))
   	("c" "Chess"
   	 ((tags-todo "chess"
-  		     (
-  		      (org-agenda-overriding-header "CHESS")
+  		     ((org-agenda-overriding-header "CHESS")
   		      (org-agenda-remove-tags t)
   		      (org-super-agenda-groups '((:name "Tactics Theme" :tag "tactics" :order 0)
   						 (:name "Openings" :tag "opening" :order 1)
@@ -489,17 +475,15 @@ Configure custom views
   						 ))))))
   	("u" "Study"
   	 ((tags-todo "study"
-  		     (
-  		      (org-agenda-overriding-header "STUDY")
+  		     ((org-agenda-overriding-header "STUDY")
   		      (org-agenda-remove-tags t)
   		      (org-super-agenda-groups '((:name "AI" :tag "ai" :order 0)
   						 (:name "Coding" :tag "code" :order 1)
-  						 (:name "Music" :tag "musics" :order 2)
+  						 (:name "Music" :tag "music" :order 2)
   						 ))))))
   	("r" "Errands"
   	 ((tags-todo "errand"
-  		     (
-  		      (org-agenda-overriding-header "ERRANDS")
+  		     ((org-agenda-overriding-header "ERRANDS")
   		      (org-agenda-remove-tags t)
   		      (org-super-agenda-groups '((:name "Calls" :tag "@phone" :order 0)
   						 (:name "Gifts" :tag "gifts" :order 1)
