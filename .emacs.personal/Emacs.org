@@ -170,7 +170,7 @@ These are basic font configurations
 #+begin_src emacs-lisp
   (use-package ef-themes
     :config
-    (ef-themes-select 'ef-day))
+    (ef-themes-select 'ef-dark))
   ;; was ef-dream
 
     ;;  (use-package doom-themes
