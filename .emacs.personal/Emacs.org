@@ -350,7 +350,7 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   			("errand" . ?e) ("chess" . ?C) ("piano" . ?p) ("study" . ?S)
   			(:endgroup . nil)
   			("activate" . ?a) ("training" . ?T)
-  			("scales" . ?g) ("tune" . ?u) ("rhythm" . ?y) ("ear" . ?E) ("misc" . ?m)
+  			("scales" . ?g) ("tune" . ?u) ("rhythm" . ?y) ("ear" . ?E) ("improv" . ?i) ("misc" . ?m)
   			("ai" . ?A) ("music" . nil)
   			("gifts" . nil) ("plan" . nil)
     			("read" . ?r) ("write" . ?s) ("code" . ?c))
@@ -372,9 +372,9 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
 ** Tag faces
 This one does not seem to be working.
 #+begin_src emacs-lisp
-  (setq org-tag-faces '(("piano" . (:foreground "forest green" :weight bold))
-    		      ("ThisWeek" . (:foreground "sienna" :weight bold))
-    		      ("Today" . (:foreground "yellow1" :weight bold))))
+  (setq org-tag-faces '(("piano" . (:foreground "#6aad0f" :weight bold))
+    		      ("ThisWeek" . (:foreground "#d1843f" :weight bold))
+    		      ("Today" . (:foreground "yellow-warmer" :weight bold))))
 #+end_src
 
 *** Org-refile to datetree
@@ -462,7 +462,8 @@ Configure custom views
   						 (:name "Tunes" :tag "tune" :order 1)
   						 (:name "Rhythm" :tag "rhythm" :order 2)
   						 (:name "Ear" :tag "ear" :order 3)
-  						 (:name "Misc" :tag "misc" :order 4)
+  						 (:name "Improvise" :tag "improv" :order 4)
+  						 (:name "Misc" :tag "misc" :order 5)
   						 ))))))
   	("c" "Chess"
   	 ((tags-todo "chess"
