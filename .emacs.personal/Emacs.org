@@ -14,6 +14,7 @@
   - [[#color-theme][Color theme]]
   - [[#zooming-inout][Zooming in/out]]
   - [[#highlight-todo][Highlight TODO]]
+- [[#beacon][Beacon]]
 - [[#dired][Dired]]
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
@@ -170,7 +171,7 @@ These are basic font configurations
 #+begin_src emacs-lisp
   (use-package ef-themes
     :config
-    (ef-themes-select 'ef-dark))
+    (ef-themes-select 'ef-dream))
   ;; was ef-dream
 
     ;;  (use-package doom-themes
@@ -211,6 +212,15 @@ Just to highlight some keywords
 	    ("REVIEW"     font-lock-keyword-face bold)
 	    ("NOTE"       success bold)
 	    ("DEPRECATED" font-lock-doc-face bold))))
+#+end_src
+* Beacon
+This is to find the cursor upon movement
+
+#+begin_src emacs-lisp
+  (use-package beacon
+    :config
+    (beacon-mode 1))
+
 #+end_src
 * Dired
 Dired jump key binding
@@ -981,12 +991,12 @@ Flymake-show-buffer-diagnostics shows the errors on the python file
 NOTE Had to disable this because it messes with the fonts when I do code folding using treesit-fold. Have to debug before I can use it again.
 
 #+begin_src emacs-lisp
-  ;; (use-package highlight-indent-guides
-  ;;   :init
-  ;;   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-  ;;   :config
-  ;;   (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
-  ;;   (setq highlight-indent-guides-method 'fill))
+  (use-package highlight-indent-guides
+    :init
+    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+    :config
+    ;; (set-face-foreground 'highlight-indent-guides-character-face "dimgray")
+    (setq highlight-indent-guides-method 'column))
 #+end_src
 
 * YAML mode
