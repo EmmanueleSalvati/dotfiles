@@ -1014,26 +1014,32 @@ Need the treesitter yaml grammar installed:
 
 * Eglot
 
+Remap python-mode to python-ts-mode first:
+#+begin_src emacs-lisp
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+#+end_src
+
+Then configure eglot
 #+begin_src emacs-lisp
   (use-package eglot
     :config
-    (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("ruff" "server")))
-    ;; (add-to-list 'eglot-server-programs '('(python-mode python-ts-mode) . ("/Users/emmanuelesalvati/.uvenv/prep-shared-py3.11/bin/pylsp")))
+    (add-to-list 'eglot-server-programs '('(python-mode) . ("ruff" "server")))
     :hook
-    ((python-ts-mode . eglot-ensure)
+    ((python-mode . hs-minor-mode)
      (python-mode . eglot-ensure))
-    :config
-    (setq-default eglot-workspace-configuration
-  		'((:pylsp . (:plugins
-  			     (:pycodestyle (:enabled :json-false)
-  			      :ruff (:enabled t
-  					      :formatEnabled t
-  					      :lineLength 88
-  					      :select "F"
-  					      :ignore "D210"
-  					      :preview t
-  					      :codeAction t) ))
-  			  ))))
+    ;; :config
+    ;; (setq-default eglot-workspace-configuration
+    ;; 		'((:pylsp . (:plugins
+    ;; 			     (:pycodestyle (:enabled :json-false)
+    ;; 			      :ruff (:enabled t
+    ;; 					      :formatEnabled t
+    ;; 					      :lineLength 88
+    ;; 					      :select "F"
+    ;; 					      :ignore "D210"
+    ;; 					      :preview t
+    ;; 					      :codeAction t) ))
+    ;; 			  )))
+    )
 #+end_src
 
 #+begin_src emacs-lisp
