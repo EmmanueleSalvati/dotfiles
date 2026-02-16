@@ -61,6 +61,7 @@
 - [[#lilypond][Lilypond]]
 - [[#treemacs][Treemacs]]
 - [[#winum][Winum]]
+- [[#latex][LaTeX]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -169,9 +170,35 @@ These are basic font configurations
 ** Color theme
 
 #+begin_src emacs-lisp
+  ;; (use-package ef-themes
+  ;;   :config
+  ;;   (ef-themes-select 'ef-dream))
+
   (use-package ef-themes
-    :config
-    (ef-themes-select 'ef-dream))
+  :ensure t
+  :init
+  ;; This makes the Modus commands listed below consider only the Ef
+  ;; themes.  For an alternative that includes Modus and all
+  ;; derivative themes (like Ef), enable the
+  ;; `modus-themes-include-derivatives-mode' instead.  The manual of
+  ;; the Ef themes has a section that explains all the possibilities:
+  ;;
+  ;; - Evaluate `(info "(ef-themes) Working with other Modus themes or taking over Modus")'
+  ;; - Visit <https://protesilaos.com/emacs/ef-themes#h:6585235a-5219-4f78-9dd5-6a64d87d1b6e>
+  (ef-themes-take-over-modus-themes-mode 1)
+  :bind
+  (("<f5>" . modus-themes-rotate)
+   ("C-<f5>" . modus-themes-select)
+   ("M-<f5>" . modus-themes-load-random))
+  :config
+  ;; All customisations here.
+  (setq modus-themes-mixed-fonts t)
+  (setq modus-themes-italic-constructs t)
+
+  ;; Finally, load your theme of choice (or a random one with
+  ;; `modus-themes-load-random', `modus-themes-load-random-dark',
+  ;; `modus-themes-load-random-light').
+  (modus-themes-load-theme 'ef-summer))
   ;; was ef-dream
 
     ;;  (use-package doom-themes
@@ -338,7 +365,7 @@ Useful for automatically expanding src code
 
 Here we go. Setup the agenda, trying to remove unnecessary stuff.
 #+begin_src emacs-lisp
-  (setq org-base-path (expand-file-name "~/Documents/org"))
+  (setq org-base-path (expand-file-name "~/Nextcloud/Documents/org"))
 
   (define-key global-map (kbd "C-c c") #'org-capture)
   (define-key global-map (kbd "C-c a") #'org-agenda)
@@ -351,7 +378,7 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
     	org-log-done 'time
     	org-log-into-drawer t
     	org-agenda-files '("Tasks.org" "piano-log.org" "piano.org" "work-log.org"
-    			   "Archive.org" "chess-analysis.org" "mybooks.org")
+    			   "Archive.org" "chess-analysis.org" "mybooks.org" "garden.org")
       	org-todo-keywords '((sequence "TODO(t)" "ACTIVE(a)" "BLOCKED(b)" "|"
   				      "DONE(d!)" "CANC(k@/!)"))
     	org-tag-alist '(("Today" . ?t) ("ThisWeek" . ?w) ("@work" . ?W)
@@ -363,7 +390,8 @@ Here we go. Setup the agenda, trying to remove unnecessary stuff.
   			("scales" . ?g) ("tune" . ?u) ("rhythm" . ?y) ("ear" . ?E) ("improv" . ?i) ("misc" . ?m)
   			("ai" . ?A) ("music" . nil)
   			("gifts" . nil) ("plan" . nil)
-    			("read" . ?r) ("write" . ?s) ("code" . ?c))
+    			("read" . ?r) ("write" . ?s) ("code" . ?c)
+  			("garden" . ?G))
     	org-capture-templates '(("t" "Tasks / Projects")
     				("tt" "Task" entry
     				 (file+olp "Tasks.org" "Personal Tasks")
@@ -432,7 +460,8 @@ Configure custom views
   					       (:name "Errands" :tag "errand" :order 4)
   					       (:name "Read" :tag "read" :order 5)
   					       (:name "Study" :tag "study" :order 6)
-    					       (:name "Recurring" :tag "recurring" :order 7)
+  					       (:name "Recurring" :tag "recurring" :order 7)
+  					       (:name "Garden" :tag "garden" :order 8)  					       
   					       ))))))
   	("w" "This Week"
   	 ((tags-todo "ThisWeek"
@@ -500,6 +529,11 @@ Configure custom views
   						 (:name "Gifts" :tag "gifts" :order 1)
   						 (:name "Plan Activities" :tag "plan" :order 2)
   						 ))))))
+  	("g" "Garden"
+  	 ((tags-todo "garden"
+  		     ((org-agenda-overriding-header "GARDEN")
+  		      (org-agenda-remove-tags t)
+  		      ))))	
   	))
     #+end_src
 ** Org-books
@@ -519,11 +553,21 @@ Configure custom views
     :bind (("C-c n l" . org-roam-buffer-toggle)
   	 ("C-c n f" . org-roam-node-find)
   	 ("C-c n i" . org-roam-node-insert)
-  	 :map org-mode-map ("C-M-i" . completion-at-point))
+  	 :map org-mode-map
+  	 ("C-M-i" . completion-at-point)
+  	 :map org-roam-dailies-map
+  	 ("Y" . org-roam-dailies-capture-yesterday)
+  	 ("T" . org-roam-dailies-capture-tomorrow))
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
     :custom
     (org-roam-directory org-roam-base-path)
     (org-roam-completion-everywhere t)
+    (org-roam-dailies-capture-templates
+     '(("d" "default" entry "* %<%I:%M %p>: %?"
+        :if-new (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n"))))
     :config
+    (require 'org-roam-dailies)
     (org-roam-db-autosync-mode))
 
   (with-eval-after-load 'org-roam
@@ -631,6 +675,7 @@ inserts. Instead, we do a little copying and implement our own function.
   	))
 #+end_src
 
+NOTE I might not need this section
 Fleeting notes, thanks to System Crafters:
 #+begin_src emacs-lisp
   (defun es/org-roam-capture-fleeting ()
@@ -1162,4 +1207,13 @@ Or, if you have treemacs open "M-0" to select the treemacs tab.
     :ensure t
     :config
     (winum-mode t))
+#+end_src
+
+* LaTeX
+
+Without this fix, I can't write anything, it keeps trying to use ispell
+to complete words and fails to find it.
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'text-mode-ispell-word-completion nil)
 #+end_src
