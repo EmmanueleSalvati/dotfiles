@@ -64,6 +64,7 @@
 - [[#winum][Winum]]
 - [[#latex][LaTeX]]
 - [[#copilot][Copilot]]
+- [[#sly-lisp][Sly LISP]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -1271,4 +1272,10 @@ to complete words and fails to find it.
   (use-package copilot-chat
     :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
     :after (request org markdown-mode))
+#+end_src
+
+* Sly LISP
+
+#+begin_src emacs-lisp
+  (use-package sly)
 #+end_src
