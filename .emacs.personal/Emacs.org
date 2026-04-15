@@ -8,6 +8,7 @@
   - [[#setup-straightel][Setup Straight.el]]
   - [[#debug-on-startup][Debug on Startup]]
   - [[#keep-folders-clean][Keep folders clean]]
+- [[#configure-projectel-to-avoid-conflicts][Configure Project.el to avoid conflicts]]
 - [[#ui-configuration][UI configuration]]
   - [[#font-and-transparency][Font and transparency]]
   - [[#basic-stuff][Basic stuff]]
@@ -113,6 +114,11 @@ Thanks to System Crafters
   ;; (setq create-lockfiles nil)
 
   (use-package no-littering)
+#+end_src
+* Configure Project.el to avoid conflicts
+#+begin_src emacs-lisp
+  (use-package project
+    :ensure t)
 #+end_src
 * UI configuration
 ** Font and transparency
