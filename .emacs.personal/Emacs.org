@@ -407,7 +407,7 @@ Useful for automatically expanding src code
 
 Here we go. Setup the agenda, trying to remove unnecessary stuff.
 #+begin_src emacs-lisp
-  (setq org-base-path (expand-file-name "~/Nextcloud/Documents/org"))
+  (setq org-base-path (expand-file-name "~/Nextcloud-stallone/Documents/org"))
 
   (define-key global-map (kbd "C-c c") #'org-capture)
   (define-key global-map (kbd "C-c a") #'org-agenda)
