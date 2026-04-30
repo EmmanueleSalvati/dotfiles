@@ -66,6 +66,7 @@
 - [[#latex][LaTeX]]
 - [[#copilot][Copilot]]
 - [[#sly-lisp][Sly LISP]]
+  - [[#use-roswell][Use Roswell]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -1283,5 +1284,12 @@ to complete words and fails to find it.
 * Sly LISP
 
 #+begin_src emacs-lisp
-  (use-package sly)
+  (use-package sly
+    :ensure t)
+#+end_src
+
+** Use Roswell
+
+#+begin_src emacs-lisp
+  (setq inferior-lisp-program "ros -Q run")
 #+end_src
