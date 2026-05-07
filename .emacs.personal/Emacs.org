@@ -67,6 +67,7 @@
 - [[#copilot][Copilot]]
 - [[#sly-lisp][Sly LISP]]
   - [[#use-roswell][Use Roswell]]
+- [[#ess---r][ESS - R]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -1292,4 +1293,57 @@ to complete words and fails to find it.
 
 #+begin_src emacs-lisp
   (setq inferior-lisp-program "ros -Q run")
+#+end_src
+
+* ESS - R
+This is to run R and other stats packages
+
+#+begin_src emacs-lisp
+  (use-package ess
+    :init
+    (setq ess-style 'RStudio)
+    :mode
+    (("\\.[rR]" . ess-r-mode)
+     ;; If you also use julia or some other language
+     ("\\.[jJ][lL]" . ess-julia-mode))
+    ;; Add my personal key-map
+    :config
+    ;; ESS process (print all)
+    (setq ess-eval-visibly-p t)
+    ;; Silence asking for aprenth directory
+    (setq ess-ask-for-ess-directory nil)
+    ;; Syntax highlights
+    (setq ess-R-font-lock-keywords
+      '((ess-R-fl-keyword:keywords . t)
+        (ess-R-fl-keyword:constants . t)
+        (ess-R-fl-keyword:modifiers . t)
+        (ess-R-fl-keyword:fun-defs . t)
+        (ess-R-fl-keyword:assign-ops . t)
+        (ess-R-fl-keyword:%op% . t)
+        (ess-fl-keyword:fun-calls . t)
+        (ess-fl-keyword:numbers . t)
+        (ess-fl-keyword:operators)
+        (ess-fl-keyword:delimiters)
+        (ess-fl-keyword:=)
+        (ess-R-fl-keyword:F&T . t))))
+
+
+  ;; R markdown
+  (use-package polymode)
+  (use-package poly-R
+    :ensure t
+    :mode ("\\.Rmd\\'" . poly-markdown+r-mode))
+  (use-package poly-markdown)
+  (use-package quarto-mode
+    :ensure t
+    :mode (("\\.qmd\\'" . quarto-mode)))
+
+  ;; MARKDOWN
+  (add-to-list 'auto-mode-alist '("\\.md" . poly-markdown-mode))
+
+  ;; R modes
+  (add-to-list 'auto-mode-alist '("\\.Snw" . poly-noweb+r-mode))
+  (add-to-list 'auto-mode-alist '("\\.Rnw" . poly-noweb+r-mode))
+  (add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode))
+  (add-to-list 'auto-mode-alist '("\\.qmd" . poly-markdown+r-mode))
 #+end_src
