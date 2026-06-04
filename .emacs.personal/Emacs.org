@@ -1,4 +1,5 @@
 #+title: Personal emacs configuration
+rg-bab
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.personal/init.el :mkdirp yes
 #+auto_tangle: t
 #+STARTUP: show2levels
@@ -657,7 +658,9 @@ Here things get a bit complex. This is the sequence:
      `((file ,(all-the-icons-faicon "file-pdf-o" :face 'all-the-icons-green :v-adjust -0.1) . " ")
        (note ,(all-the-icons-material "speaker_notes" :face 'all-the-icons-blue :v-adjust -0.3) . " ")
        (link ,(all-the-icons-octicon "link" :face 'all-the-icons-orange :v-adjust 0.01) . " ")))
-    (citar-symbol-separator "  "))
+    (citar-symbol-separator "  ")
+    :bind
+    (:map org-mode-map :package org ("C-c b" . #'org-cite-insert)))
 #+end_src
 
 **** citar-org-roam configuration
@@ -803,6 +806,18 @@ Use citar-modified capture template for literature notes:
 # #+end_src
 
 #+RESULTS:
+*** org-roam-ui
+#+begin_src emacs-lisp
+  (use-package org-roam-ui
+    :straight
+    (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
+    :after org-roam
+    :config
+    (setq org-roam-ui-sync-theme t
+  	org-roam-ui-follow t
+  	org-roam-ui-update-on-save t
+  	org-roam-ui-open-on-start t))
+#+end_src
 
 * Vertico
 
