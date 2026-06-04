@@ -7,6 +7,7 @@
 - [[#package-system-setup][Package System Setup]]
   - [[#setup-straightel][Setup Straight.el]]
   - [[#debug-on-startup][Debug on Startup]]
+  - [[#ignore-pesky-warnings-of-functions-not-found][Ignore pesky warnings of functions not found]]
   - [[#keep-folders-clean][Keep folders clean]]
 - [[#configure-projectel-to-avoid-conflicts][Configure Project.el to avoid conflicts]]
 - [[#ui-configuration][UI configuration]]
@@ -99,6 +100,10 @@
 ** Debug on Startup
 #+begin_src emacs-lisp
   (setq debug-on-error t)
+#+end_src
+** Ignore pesky warnings of functions not found
+#+begin_src emacs-lisp
+  (setq native-comp-async-report-warning-errors nil)
 #+end_src
 ** Keep folders clean
 Thanks to System Crafters
