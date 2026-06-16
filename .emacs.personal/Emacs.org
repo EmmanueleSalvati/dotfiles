@@ -56,6 +56,7 @@ rg-bab
   - [[#pyvenv][pyvenv]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
 - [[#yaml-mode][YAML mode]]
+- [[#uv-mode-on-python][uv mode on python]]
 - [[#eglot][Eglot]]
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
@@ -1119,6 +1120,17 @@ Need the treesitter yaml grammar installed:
     :hook (yaml-mode . (lambda () (define-key yaml-mode-map "C-m" 'newline-and-indent)))
     :config
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+#+end_src
+
+* uv mode on python
+This is the automatically run uv in a project that has a .venv directory in it.
+I just do not know if I should still use =python-ts-mode=, or =eglot=.
+TODO: this needs to be fixed. as well as the eglot section.
+
+#+begin_src emacs-lisp
+  (use-package uv-mode
+    :ensure t
+    :hook (python-mode . uv-mode-auto-activate-hook))
 #+end_src
 
 * Eglot
