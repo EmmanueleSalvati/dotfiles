@@ -1,5 +1,4 @@
 #+title: Personal emacs configuration
-rg-bab
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.personal/init.el :mkdirp yes
 #+auto_tangle: t
 #+STARTUP: show2levels
