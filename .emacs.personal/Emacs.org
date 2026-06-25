@@ -48,10 +48,6 @@
 - [[#rainbow-mode-and-delimiters][Rainbow mode and delimiters]]
 - [[#doom-modeline][Doom modeline]]
 - [[#exec-path-from-shell][exec-path-from-shell]]
-- [[#tree-sit-auto-to-remove][Tree-sit auto (to remove)]]
-- [[#treesit-fold-to-remove][Treesit-fold (to remove)]]
-- [[#python-mode-to-remove][Python mode (to remove)]]
-  - [[#pyvenv-to-remove][pyvenv (to remove)]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
 - [[#python-configuration][Python configuration]]
   - [[#treesitter-for-python-formatting][Treesitter for python formatting]]
@@ -60,7 +56,6 @@
   - [[#use-uv-for-virtual-environment-management][Use uv for virtual environment management]]
   - [[#tell-tramp-to-use-the-remote-path-if-using-tramp][Tell TRAMP to use the remote PATH (if using TRAMP)]]
 - [[#yaml-mode][YAML mode]]
-- [[#uv-mode-on-python-to-remove][uv mode on python (to remove)]]
 - [[#eglot-old-version---to-remove][Eglot (old version - to remove)]]
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
@@ -1015,56 +1010,6 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
       (exec-path-from-shell-initialize)))
 #+end_src
 
-* Tree-sit auto (to remove)
-# #+begin_src emacs-lisp
-#   (use-package treesit-auto
-#     :demand t
-#     :custom
-#     (treesit-auto-install 'prompt)
-#     :config
-#     (global-treesit-auto-mode))
-# #+end_src
-
-* Treesit-fold (to remove)
-This is a fork of ts-fold, which uses the native treesit.el instead of the old tree-sitter.
-This is the link: https://github.com/abougouffa/treesit-fold
-# #+begin_src emacs-lisp
-#   (use-package treesit-fold
-#     :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
-#     :bind (:map treesit-fold-mode-map
-#   	  ("C-c d" . treesit-fold-close)
-#   	  ("C-c s" . treesit-fold-open)))
-
-#   (global-treesit-fold-indicators-mode 1)
-#   (setq treesit-fold-indicators-fringe 'left-fringe)
-# #+end_src
-
-* Python mode (to remove)
-TODO. Remove this section.
-# #+begin_src emacs-lisp
-#   (use-package python
-#      :hook ((python-ts-mode . eglot-ensure))
-#      :mode (("\\.py\\'" . python-ts-mode)))
-# #+end_src
-Flymake-show-buffer-diagnostics shows the errors on the python file
-
-** pyvenv (to remove)
-
-# #+begin_src emacs-lisp
-
-#   (use-package pyvenv
-#     :ensure t
-#     :init
-#     (setenv "WORKON_HOME" "~/.uvenv")
-#     :config
-#     (pyvenv-mode 1)
-#     (setq pyvenv-post-activate-hooks
-#           (list (lambda ()
-#                   (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
-#     (setq pyvenv-post-deactivate-hooks
-#           (list (lambda ()
-#                   (setq python-shell-interpreter "python3")))))
-# #+end_src
 
 ** Highlight-indent-guides
 
@@ -1114,7 +1059,8 @@ NOTE =treesit-fold= is for the newer emacs with built-in treesitter.
     (add-hook 'python-ts-mode-hook #'treesit-fold-mode)
     (add-hook 'python-ts-mode-hook #'treesit-fold-indicators-mode)
     :config
-    (setq treesit-fold-indicators-fringe 'left-fringe))
+    (setq treesit-fold-indicators-fringe 'left-fringe
+  	treesit-fold-indicators-open-indicator 'right-triangle))
 #+end_src
 
 NOTE These are the Evil mode basic commands to fold:
@@ -1175,46 +1121,7 @@ Need the treesitter yaml grammar installed:
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+end_src
 
-* uv mode on python (to remove)
-This is the automatically run uv in a project that has a .venv directory in it.
-I just do not know if I should still use =python-ts-mode=, or =eglot=.
-TODO: this needs to be fixed. as well as the eglot section.
-
-# #+begin_src emacs-lisp
-#   (use-package uv-mode
-#     :ensure t
-#     :hook (python-mode . uv-mode-auto-activate-hook))
-# #+end_src
-
 * Eglot (old version - to remove)
-
-# Remap python-mode to python-ts-mode first:
-# #+begin_src emacs-lisp
-#   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-# #+end_src
-
-# Then configure eglot
-# #+begin_src emacs-lisp
-#   (use-package eglot
-#     :config
-#     (add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
-#     :hook
-#     ((python-mode . hs-minor-mode)
-#      (python-mode . eglot-ensure))
-#     ;; :config
-#     ;; (setq-default eglot-workspace-configuration
-#     ;; 		'((:pylsp . (:plugins
-#     ;; 			     (:pycodestyle (:enabled :json-false)
-#     ;; 			      :ruff (:enabled t
-#     ;; 					      :formatEnabled t
-#     ;; 					      :lineLength 88
-#     ;; 					      :select "F"
-#     ;; 					      :ignore "D210"
-#     ;; 					      :preview t
-#     ;; 					      :codeAction t) ))
-#     ;; 			  )))
-#     )
-# #+end_src
 
 # #+begin_src emacs-lisp
 #   ;; (use-package eglot
