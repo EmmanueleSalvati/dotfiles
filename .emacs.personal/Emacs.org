@@ -48,15 +48,20 @@
 - [[#rainbow-mode-and-delimiters][Rainbow mode and delimiters]]
 - [[#doom-modeline][Doom modeline]]
 - [[#exec-path-from-shell][exec-path-from-shell]]
-- [[#tree-sit-auto][Tree-sit auto]]
-- [[#tree-sitter-grammars][Tree-sitter grammars]]
-- [[#treesit-fold][Treesit-fold]]
-- [[#python-mode][Python mode]]
-  - [[#pyvenv][pyvenv]]
+- [[#tree-sit-auto-to-remove][Tree-sit auto (to remove)]]
+- [[#treesit-fold-to-remove][Treesit-fold (to remove)]]
+- [[#python-mode-to-remove][Python mode (to remove)]]
+  - [[#pyvenv-to-remove][pyvenv (to remove)]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
+- [[#python-configuration][Python configuration]]
+  - [[#treesitter-for-python-formatting][Treesitter for python formatting]]
+  - [[#code-folding-using-the-modern-python-ts-mode][Code folding using the modern python-ts-mode]]
+  - [[#eglot][eglot]]
+  - [[#use-uv-for-virtual-environment-management][Use uv for virtual environment management]]
+  - [[#tell-tramp-to-use-the-remote-path-if-using-tramp][Tell TRAMP to use the remote PATH (if using TRAMP)]]
 - [[#yaml-mode][YAML mode]]
-- [[#uv-mode-on-python][uv mode on python]]
-- [[#eglot][Eglot]]
+- [[#uv-mode-on-python-to-remove][uv mode on python (to remove)]]
+- [[#eglot-old-version---to-remove][Eglot (old version - to remove)]]
 - [[#vterm][vterm]]
   - [[#vterm-toggle][vterm-toggle]]
 - [[#line-number-mode][Line number mode]]
@@ -921,23 +926,25 @@ Implements completion at point. TODO requires more study.
   (use-package corfu
     :custom
     (corfu-auto t)
+    (corfu-auto-delay 0.1)
+    (corfu-auto-prefix 1)
+    (corfu-quit-mo-match 'separator)
     (corfu-preselect 'directory)
     :init
     (global-corfu-mode)
     (setq tab-always-indent 'complete))
-
-  ;; A few more useful configurations...
-  ;; (use-package emacs
-  ;;   :custom
-  ;;   ;; Enable indentation+completion using the TAB key.
-  ;;   ;; `completion-at-point' is often bound to M-TAB.
-  ;;   (tab-always-indent 'complete)
-
-  ;;   ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
-  ;;   ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
-  ;;   ;; setting is useful beyond Corfu.
-  ;;   (read-extended-command-predicate #'command-completion-default-include-p))
 #+end_src
+  # ;; A few more useful configurations...
+  # ;; (use-package emacs
+  # ;;   :custom
+  # ;;   ;; Enable indentation+completion using the TAB key.
+  # ;;   ;; `completion-at-point' is often bound to M-TAB.
+  # ;;   (tab-always-indent 'complete)
+
+  # ;;   ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
+  # ;;   ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
+  # ;;   ;; setting is useful beyond Corfu.
+  # ;;   (read-extended-command-predicate #'command-completion-default-include-p))
 
 * Orderless
 ** Basic working
@@ -1008,92 +1015,56 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
       (exec-path-from-shell-initialize)))
 #+end_src
 
-* Tree-sit auto
-#+begin_src emacs-lisp
-  (use-package treesit-auto
-    :demand t
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (global-treesit-auto-mode))
-
-#+end_src
-* Tree-sitter grammars
+* Tree-sit auto (to remove)
 # #+begin_src emacs-lisp
-#   (setq treesit-language-source-alist
-#    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-#      (cmake "https://github.com/uyha/tree-sitter-cmake")
-#      (css "https://github.com/tree-sitter/tree-sitter-css")
-#      (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-#      (go "https://github.com/tree-sitter/tree-sitter-go")
-#      (html "https://github.com/tree-sitter/tree-sitter-html")
-#      (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
-#      (json "https://github.com/tree-sitter/tree-sitter-json")
-#      (make "https://github.com/alemuller/tree-sitter-make")
-#      (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-#      (python "https://github.com/tree-sitter/tree-sitter-python")
-#      (toml "https://github.com/tree-sitter/tree-sitter-toml")
-#      (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-#      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-#      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
-
-#   ;; install all these language grammars
-#   (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
-
+#   (use-package treesit-auto
+#     :demand t
+#     :custom
+#     (treesit-auto-install 'prompt)
+#     :config
+#     (global-treesit-auto-mode))
 # #+end_src
 
-# ** Remap major modes into tree-sitter major-modes
-# #+begin_src emacs-lisp
-#   (setq major-mode-remap-alist
-#         '((yaml-mode . yaml-ts-mode)
-#   	(bash-mode . bash-ts-mode)
-#   	(js2-mode . js-ts-mode)
-#   	(typescript-mode . typescript-ts-mode)
-#   	(json-mode . json-ts-mode)
-#   	(css-mode . css-ts-mode)
-#   	(python-mode . python-ts-mode)))
-# #+end_src
-
-* Treesit-fold
+* Treesit-fold (to remove)
 This is a fork of ts-fold, which uses the native treesit.el instead of the old tree-sitter.
 This is the link: https://github.com/abougouffa/treesit-fold
-#+begin_src emacs-lisp
-  (use-package treesit-fold
-    :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
-    :bind (:map treesit-fold-mode-map
-  	  ("C-c d" . treesit-fold-close)
-  	  ("C-c s" . treesit-fold-open)))
+# #+begin_src emacs-lisp
+#   (use-package treesit-fold
+#     :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
+#     :bind (:map treesit-fold-mode-map
+#   	  ("C-c d" . treesit-fold-close)
+#   	  ("C-c s" . treesit-fold-open)))
 
-  (global-treesit-fold-indicators-mode 1)
-  (setq treesit-fold-indicators-fringe 'left-fringe)
-#+end_src
+#   (global-treesit-fold-indicators-mode 1)
+#   (setq treesit-fold-indicators-fringe 'left-fringe)
+# #+end_src
 
-* Python mode
-
-#+begin_src emacs-lisp
-   (use-package python
-     :hook ((python-ts-mode . eglot-ensure))
-     :mode (("\\.py\\'" . python-ts-mode)))
-#+end_src
+* Python mode (to remove)
+TODO. Remove this section.
+# #+begin_src emacs-lisp
+#   (use-package python
+#      :hook ((python-ts-mode . eglot-ensure))
+#      :mode (("\\.py\\'" . python-ts-mode)))
+# #+end_src
 Flymake-show-buffer-diagnostics shows the errors on the python file
 
-** pyvenv
+** pyvenv (to remove)
 
-#+begin_src emacs-lisp
+# #+begin_src emacs-lisp
 
-  (use-package pyvenv
-    :ensure t
-    :init
-    (setenv "WORKON_HOME" "~/.uvenv")
-    :config
-    (pyvenv-mode 1)
-    (setq pyvenv-post-activate-hooks
-          (list (lambda ()
-                  (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
-    (setq pyvenv-post-deactivate-hooks
-          (list (lambda ()
-                  (setq python-shell-interpreter "python3")))))
-#+end_src
+#   (use-package pyvenv
+#     :ensure t
+#     :init
+#     (setenv "WORKON_HOME" "~/.uvenv")
+#     :config
+#     (pyvenv-mode 1)
+#     (setq pyvenv-post-activate-hooks
+#           (list (lambda ()
+#                   (setq python-shell-interpreter (concat pyvenv-virtual-env "bin/python")))))
+#     (setq pyvenv-post-deactivate-hooks
+#           (list (lambda ()
+#                   (setq python-shell-interpreter "python3")))))
+# #+end_src
 
 ** Highlight-indent-guides
 
@@ -1108,6 +1079,89 @@ NOTE Had to disable this because it messes with the fonts when I do code folding
     (setq highlight-indent-guides-method 'column))
 #+end_src
 
+* Python configuration
+
+Got this from google gemini.
+
+First install basedpyright and ruff
+#+begin_src bash
+  uv tool install basedpyright
+  uv tool install ruff
+#+end_src
+
+** Treesitter for python formatting
+
+#+begin_src emacs-lisp
+  (use-package treesit
+    :straight nil
+    :config
+    (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+    ;; Automatically download python grammar if it is missing
+    (unless (treesit-language-available-p 'python)
+      (treesit-install-language-grammar 'python)))
+#+end_src
+
+** Code folding using the modern python-ts-mode
+
+NOTE =treesit-fold= is for the newer emacs with built-in treesitter.
+=ts-fold= is for old emacs relying on third party treesitter.
+
+#+begin_src emacs-lisp
+  (use-package treesit-fold
+    :straight (treesit-fold :type git :host github :repo "emacs-tree-sitter/treesit-fold")
+    :commands (treesit-fold-mode treesit-fold-indicators-mode)
+    :init
+    (add-hook 'python-ts-mode-hook #'treesit-fold-mode)
+    (add-hook 'python-ts-mode-hook #'treesit-fold-indicators-mode)
+    :config
+    (setq treesit-fold-indicators-fringe 'left-fringe))
+#+end_src
+
+NOTE These are the Evil mode basic commands to fold:
+- (kbd "za") #'treesit-fold-toggle
+- (kbd "zc") #'treesit-fold-close
+- (kbd "zo") #'treesit-fold-open
+- (kbd "zm") #'treesit-fold-close-all
+- (kbd "zr") #'treesit-fold-open-all
+  
+** eglot
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :straight nil
+    :hook
+    ;; Automatically start Eglot when opening python files
+    (python-ts-mode . eglot-ensure)
+    :config
+    ;; use basedpyright as language server
+    ;; (add-to-list 'eglot-server-programs
+    ;; 	       '((python-ts-mode python-mode) . ("basedpyright-langserver" "--stdio")))
+    (add-to-list 'eglot-server-programs
+  	       '((python-ts-mode python-mode) . ("uvx" "--from" "basedpyright" "basedpyright-langserver" "--stdio")))
+    (setq eglot-events-buffer-size 0
+  	eglot-autoshutdown t))
+#+end_src
+
+** Use uv for virtual environment management
+
+#+begin_src emacs-lisp
+  (use-package uv-mode
+    :ensure t
+    :hook
+    (python-ts-mode . uv-mode-auto-activate-hook)
+    :config
+    ;; Optional: If you switch environments or run 'uv sync' while a file is open,
+    ;; this hook ensures Eglot automatically restarts to pick up the changes.
+    (add-hook 'uv-mode-post-activate-hook #'eglot-reconnect))
+#+end_src
+
+** Tell TRAMP to use the remote PATH (if using TRAMP)
+#+begin_src emacs-lisp
+  (use-package tramp
+    :straight nil
+    :config
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+#+end_src
 * YAML mode
 Define Yaml mode. TODO Need to change the key mapping.
 Need the treesitter yaml grammar installed:
@@ -1121,77 +1175,77 @@ Need the treesitter yaml grammar installed:
     (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
 #+end_src
 
-* uv mode on python
+* uv mode on python (to remove)
 This is the automatically run uv in a project that has a .venv directory in it.
 I just do not know if I should still use =python-ts-mode=, or =eglot=.
 TODO: this needs to be fixed. as well as the eglot section.
 
-#+begin_src emacs-lisp
-  (use-package uv-mode
-    :ensure t
-    :hook (python-mode . uv-mode-auto-activate-hook))
-#+end_src
+# #+begin_src emacs-lisp
+#   (use-package uv-mode
+#     :ensure t
+#     :hook (python-mode . uv-mode-auto-activate-hook))
+# #+end_src
 
-* Eglot
+* Eglot (old version - to remove)
 
-Remap python-mode to python-ts-mode first:
-#+begin_src emacs-lisp
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-#+end_src
+# Remap python-mode to python-ts-mode first:
+# #+begin_src emacs-lisp
+#   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+# #+end_src
 
-Then configure eglot
-#+begin_src emacs-lisp
-  (use-package eglot
-    :config
-    (add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
-    :hook
-    ((python-mode . hs-minor-mode)
-     (python-mode . eglot-ensure))
-    ;; :config
-    ;; (setq-default eglot-workspace-configuration
-    ;; 		'((:pylsp . (:plugins
-    ;; 			     (:pycodestyle (:enabled :json-false)
-    ;; 			      :ruff (:enabled t
-    ;; 					      :formatEnabled t
-    ;; 					      :lineLength 88
-    ;; 					      :select "F"
-    ;; 					      :ignore "D210"
-    ;; 					      :preview t
-    ;; 					      :codeAction t) ))
-    ;; 			  )))
-    )
-#+end_src
+# Then configure eglot
+# #+begin_src emacs-lisp
+#   (use-package eglot
+#     :config
+#     (add-to-list 'eglot-server-programs '(python-mode . ("pylsp")))
+#     :hook
+#     ((python-mode . hs-minor-mode)
+#      (python-mode . eglot-ensure))
+#     ;; :config
+#     ;; (setq-default eglot-workspace-configuration
+#     ;; 		'((:pylsp . (:plugins
+#     ;; 			     (:pycodestyle (:enabled :json-false)
+#     ;; 			      :ruff (:enabled t
+#     ;; 					      :formatEnabled t
+#     ;; 					      :lineLength 88
+#     ;; 					      :select "F"
+#     ;; 					      :ignore "D210"
+#     ;; 					      :preview t
+#     ;; 					      :codeAction t) ))
+#     ;; 			  )))
+#     )
+# #+end_src
 
-#+begin_src emacs-lisp
-  ;; (use-package eglot
-  ;;   :bind (:map eglot-mode-map
-  ;; 	      ("C-c d" . eldoc)
-  ;; 	      ("C-c a" . eglot-code-actions)
-  ;; 	      ("C-c r" . eglot-rename)
-  ;; 	      ("C-c f" . eglot-format-buffer))
-  ;;   :hook ((python-ts-mode . eglot-ensure)
-  ;; 	 (python-ts-mode . hs-minor-mode)
-  ;; 	 (python-ts-mode . flyspell-prog-mode)
-  ;; 	 (python-ts-mode . (lambda () (set-fill-column 88)))))
-    ;; :config
-    ;; (setq-default eglot-workspace-configuration
-    ;; 		'((:pylsp . (:configurationSources ["flake8"]
-    ;; 						   :plugins (
-    ;; 							     :pycodestyle ( :enabled :json-false)
-    ;; 							     :mccabe (:enabled :json-false)
-    ;; 							     :pyflakes (:enabled :json-false)
-    ;; 							     :flake8 (:enabled :json-false
-    ;; 									       :maxLineLength 88)
-    ;; 							     :ruff (:enabled t
-    ;; 									     :lineLength 88)
-    ;; 							     :pydocstyle (:enabled t
-    ;; 										   :convention "numpy")
-    ;; 							     :yapf (:enabled t :json-false)
-    ;; 							     :autopep8 (:enabled :json-false)
-    ;; 							     :black (:enabled t
-    ;; 									      :line_length 88
-    ;; 									      :cache_config t)))))))
-#+end_src
+# #+begin_src emacs-lisp
+#   ;; (use-package eglot
+#   ;;   :bind (:map eglot-mode-map
+#   ;; 	      ("C-c d" . eldoc)
+#   ;; 	      ("C-c a" . eglot-code-actions)
+#   ;; 	      ("C-c r" . eglot-rename)
+#   ;; 	      ("C-c f" . eglot-format-buffer))
+#   ;;   :hook ((python-ts-mode . eglot-ensure)
+#   ;; 	 (python-ts-mode . hs-minor-mode)
+#   ;; 	 (python-ts-mode . flyspell-prog-mode)
+#   ;; 	 (python-ts-mode . (lambda () (set-fill-column 88)))))
+#     ;; :config
+#     ;; (setq-default eglot-workspace-configuration
+#     ;; 		'((:pylsp . (:configurationSources ["flake8"]
+#     ;; 						   :plugins (
+#     ;; 							     :pycodestyle ( :enabled :json-false)
+#     ;; 							     :mccabe (:enabled :json-false)
+#     ;; 							     :pyflakes (:enabled :json-false)
+#     ;; 							     :flake8 (:enabled :json-false
+#     ;; 									       :maxLineLength 88)
+#     ;; 							     :ruff (:enabled t
+#     ;; 									     :lineLength 88)
+#     ;; 							     :pydocstyle (:enabled t
+#     ;; 										   :convention "numpy")
+#     ;; 							     :yapf (:enabled t :json-false)
+#     ;; 							     :autopep8 (:enabled :json-false)
+#     ;; 							     :black (:enabled t
+#     ;; 									      :line_length 88
+#     ;; 									      :cache_config t)))))))
+# #+end_src
 
 * vterm
 #+begin_src emacs-lisp
