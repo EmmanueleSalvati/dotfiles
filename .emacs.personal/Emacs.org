@@ -50,6 +50,7 @@
 - [[#exec-path-from-shell][exec-path-from-shell]]
   - [[#highlight-indent-guides][Highlight-indent-guides]]
 - [[#python-configuration][Python configuration]]
+  - [[#use-treesit-auto-for-automatic-detection-of-languages][Use treesit-auto for automatic detection of languages]]
   - [[#treesitter-for-python-formatting][Treesitter for python formatting]]
   - [[#code-folding-using-the-modern-python-ts-mode][Code folding using the modern python-ts-mode]]
   - [[#eglot][eglot]]
@@ -1032,6 +1033,18 @@ First install basedpyright and ruff
 #+begin_src bash
   uv tool install basedpyright
   uv tool install ruff
+#+end_src
+
+
+** Use treesit-auto for automatic detection of languages
+
+#+begin_src emacs-lisp
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
 #+end_src
 
 ** Treesitter for python formatting
