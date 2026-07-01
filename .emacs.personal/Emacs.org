@@ -1011,7 +1011,6 @@ A completion style, copied from here: https://kristofferbalintona.me/posts/20220
       (exec-path-from-shell-initialize)))
 #+end_src
 
-
 * Python configuration
 
 Got this from google gemini.
@@ -1105,7 +1104,11 @@ NOTE These are the Evil mode basic commands to fold:
     (add-to-list 'eglot-server-programs
   	       '((python-ts-mode python-mode) . ("uvx" "--from" "basedpyright" "basedpyright-langserver" "--stdio")))
     (setq eglot-events-buffer-size 0
-  	eglot-autoshutdown t))
+  	eglot-autoshutdown t)
+    (setq-default eglot-workspace-configuration
+  		'(:basedpyright (:typeCheckingMode "recommended")
+  				:basedpyright.analysis (:diagnosticSeverityOverrides (:reportUnusedCallResult "none")
+  							:inlayHints (:callArgumentNames :json-false)))))
 #+end_src
 
 ** Use uv for virtual environment management
