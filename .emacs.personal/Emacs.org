@@ -54,6 +54,7 @@
   - [[#code-folding-using-the-modern-python-ts-mode][Code folding using the modern python-ts-mode]]
   - [[#indent-bars][indent-bars]]
   - [[#eglot][eglot]]
+  - [[#use-ruff-formatter-for-lintingformatting][Use ruff-formatter for linting/formatting]]
   - [[#use-uv-for-virtual-environment-management][Use uv for virtual environment management]]
   - [[#tell-tramp-to-use-the-remote-path-if-using-tramp][Tell TRAMP to use the remote PATH (if using TRAMP)]]
 - [[#yaml-mode][YAML mode]]
@@ -1109,6 +1110,15 @@ NOTE These are the Evil mode basic commands to fold:
   		'(:basedpyright (:typeCheckingMode "recommended")
   				:basedpyright.analysis (:diagnosticSeverityOverrides (:reportUnusedCallResult "none")
   							:inlayHints (:callArgumentNames :json-false)))))
+#+end_src
+
+** Use ruff-formatter for linting/formatting
+Again, thanks to Gemini, I found this package to run =ruff= as a linter and formatter.
+I do this because eglot only supports one lsp server at a time, which is currently occupied by =basedpyright= for type checking.
+ruff-formatter allows you to call the CLI version of ruff as standalone. There is also an option to format on save, but I don't set it as default.
+#+begin_src emacs-lisp
+  (use-package ruff-format
+    :ensure t)
 #+end_src
 
 ** Use uv for virtual environment management
