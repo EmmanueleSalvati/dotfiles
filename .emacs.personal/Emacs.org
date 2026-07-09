@@ -72,6 +72,9 @@
 - [[#sly-lisp][Sly LISP]]
   - [[#use-roswell][Use Roswell]]
 - [[#ess---r][ESS - R]]
+- [[#keycasting][Keycasting]]
+  - [[#use-keycast-to-see-it-in-the-header][Use keycast to see it in the header]]
+  - [[#use-command-log-mode-to-see-it-on-the-side][Use command-log-mode to see it on the side]]
 
 * Package System Setup
 ** Setup Straight.el
@@ -1372,3 +1375,23 @@ This is to run R and other stats packages
   (add-to-list 'auto-mode-alist '("\\.Rmd" . poly-markdown+r-mode))
   (add-to-list 'auto-mode-alist '("\\.qmd" . poly-markdown+r-mode))
 #+end_src
+* Keycasting
+** Use keycast to see it in the header
+I wanted to see it in the mode-line, but it is not allowed by doom-modeline that disables standard regions.
+I could overwrite it, but it is easier done in the header.
+#+begin_src emacs-lisp
+  (use-package keycast
+    :ensure t
+    :config
+    (keycast-header-line-mode 1))
+#+end_src
+** Use command-log-mode to see it on the side
+This is not necessary, only if I ever want to make a presentation.
+NOTE not sure it is working.
+
+# #+begin_src emacs-lisp
+#   (use-package command-log-mode
+#     :ensure t
+#     :config
+#     (global-command-log-mode 1))
+# #+end_src
