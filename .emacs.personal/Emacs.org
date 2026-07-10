@@ -21,6 +21,7 @@
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
 - [[#evil-mode][Evil-mode]]
+  - [[#default-to-evil-normal-mode-when-switching-buffer][Default to evil normal mode when switching buffer]]
 - [[#magit][Magit]]
 - [[#org-mode][Org Mode]]
   - [[#center-org-buffers][Center Org Buffers]]
@@ -174,6 +175,7 @@ These are basic font configurations
 #+begin_src emacs-lisp
   (setq visible-bell t)
   (tooltip-mode -1)
+  (tool-bar-mode -1)
   (column-number-mode)
   (set-frame-parameter (selected-frame) 'alpha es/frame-transparency)
   (add-to-list 'default-frame-alist `(alpha . ,es/frame-transparency))
@@ -182,10 +184,10 @@ These are basic font configurations
 
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
-		  term-mode-hook
-		  shell-mode-hook
-		  treemacs-mode-hook
-		  eshell-mode-hook))
+  		  term-mode-hook
+  		  shell-mode-hook
+  		  treemacs-mode-hook
+  		  eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
@@ -337,6 +339,25 @@ Emacs default keybindings for cursor movement are hard to use. Switching to evil
     :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 #+end_src
+
+** Default to evil normal mode when switching buffer
+
+Thanks to Gemini.
+
+#+begin_src emacs-lisp
+  (defun my-evil-normal-state-on-buffer-switch (&rest _)
+    "Force evil normal state when switching buffers, except in the minibuffer."
+    (when (and (bound-and-true-p evil-mode)
+               (not (minibufferp)))
+      (evil-normal-state)))
+
+  ;; Hook into window configuration changes (covers buffer switching, pane splits, etc.)
+  (add-hook 'window-configuration-change-hook #'my-evil-normal-state-on-buffer-switch)
+
+  ;; Hook into buffer list changes (covers switching buffers within the same window)
+  (add-hook 'buffer-list-update-hook #'my-evil-normal-state-on-buffer-switch)
+#+end_src
+
 * Magit
 
 #+begin_src emacs-lisp
