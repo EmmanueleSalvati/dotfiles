@@ -343,20 +343,21 @@ Emacs default keybindings for cursor movement are hard to use. Switching to evil
 ** Default to evil normal mode when switching buffer
 
 Thanks to Gemini.
+NOTE It's messing with coding when there is vterm open?
 
-#+begin_src emacs-lisp
-  (defun my-evil-normal-state-on-buffer-switch (&rest _)
-    "Force evil normal state when switching buffers, except in the minibuffer."
-    (when (and (bound-and-true-p evil-mode)
-               (not (minibufferp)))
-      (evil-normal-state)))
+# #+begin_src emacs-lisp
+#   (defun my-evil-normal-state-on-buffer-switch (&rest _)
+#     "Force evil normal state when switching buffers, except in the minibuffer."
+#     (when (and (bound-and-true-p evil-mode)
+#                (not (minibufferp)))
+#       (evil-normal-state)))
 
-  ;; Hook into window configuration changes (covers buffer switching, pane splits, etc.)
-  (add-hook 'window-configuration-change-hook #'my-evil-normal-state-on-buffer-switch)
+#   ;; Hook into window configuration changes (covers buffer switching, pane splits, etc.)
+#   (add-hook 'window-configuration-change-hook #'my-evil-normal-state-on-buffer-switch)
 
-  ;; Hook into buffer list changes (covers switching buffers within the same window)
-  (add-hook 'buffer-list-update-hook #'my-evil-normal-state-on-buffer-switch)
-#+end_src
+#   ;; Hook into buffer list changes (covers switching buffers within the same window)
+#   (add-hook 'buffer-list-update-hook #'my-evil-normal-state-on-buffer-switch)
+# #+end_src
 
 * Magit
 
