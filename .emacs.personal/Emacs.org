@@ -21,7 +21,6 @@
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
 - [[#evil-mode][Evil-mode]]
-  - [[#default-to-evil-normal-mode-when-switching-buffer][Default to evil normal mode when switching buffer]]
 - [[#magit][Magit]]
 - [[#org-mode][Org Mode]]
   - [[#center-org-buffers][Center Org Buffers]]
@@ -39,10 +38,8 @@
 - [[#vertico-posframe][Vertico posframe]]
 - [[#marginalia][Marginalia]]
 - [[#consult][Consult]]
-- [[#corfu-mode][Corfu mode]]
 - [[#orderless][Orderless]]
-  - [[#basic-working][Basic working]]
-  - [[#not-working][Not working]]
+- [[#corfu-mode][Corfu mode]]
 - [[#embark][Embark]]
 - [[#all-the-icons][All the Icons]]
 - [[#all-the-icons-completions][All the icons completions]]
@@ -108,6 +105,7 @@
 #+begin_src emacs-lisp
   (setq debug-on-error t)
 #+end_src
+
 ** Ignore pesky warnings of functions not found
 #+begin_src emacs-lisp
   (setq native-comp-async-report-warning-errors nil)
@@ -219,7 +217,8 @@ These are basic font configurations
     ;; Finally, load your theme of choice (or a random one with
     ;; `modus-themes-load-random', `modus-themes-load-random-dark',
     ;; `modus-themes-load-random-light').
-    (modus-themes-load-theme 'ef-summer))
+    (modus-themes-load-random))
+    ;; (modus-themes-load-theme 'ef-summer))
 
     ;;  (use-package doom-themes
     ;;    :init (load-theme 'doom-Iosvkem)
@@ -265,19 +264,22 @@ This is to find the cursor upon movement
 
 #+begin_src emacs-lisp
   (use-package beacon
+    :ensure t
     :config
     (beacon-mode 1))
-
 #+end_src
+
 * Dired
 Dired jump key binding
 #+begin_src emacs-lisp
   (define-key global-map (kbd "C-x j") #'dired-jump)
 #+end_src
+
 * Ibuffer
 #+begin_src emacs-lisp
   (define-key global-map (kbd "C-x C-b") #'ibuffer)
 #+end_src
+
 * Which-key
 
 Useful UI panel for key bindings
@@ -332,8 +334,6 @@ Emacs default keybindings for cursor movement are hard to use. Switching to evil
 
   (use-package evil-collection
     :after evil
-    :init
-    ;; (setq evil-collection-key-blacklist '("C-.")) ;; not working
     :config
     (evil-collection-init))
 
@@ -341,25 +341,6 @@ Emacs default keybindings for cursor movement are hard to use. Switching to evil
     :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 #+end_src
-
-** Default to evil normal mode when switching buffer
-
-Thanks to Gemini.
-NOTE It's messing with coding when there is vterm open?
-
-# #+begin_src emacs-lisp
-#   (defun my-evil-normal-state-on-buffer-switch (&rest _)
-#     "Force evil normal state when switching buffers, except in the minibuffer."
-#     (when (and (bound-and-true-p evil-mode)
-#                (not (minibufferp)))
-#       (evil-normal-state)))
-
-#   ;; Hook into window configuration changes (covers buffer switching, pane splits, etc.)
-#   (add-hook 'window-configuration-change-hook #'my-evil-normal-state-on-buffer-switch)
-
-#   ;; Hook into buffer list changes (covers switching buffers within the same window)
-#   (add-hook 'buffer-list-update-hook #'my-evil-normal-state-on-buffer-switch)
-# #+end_src
 
 * Magit
 
@@ -942,46 +923,32 @@ Toolset that adds useful functionality to commands
   	 ("C-x C-j" . consult-dir)))
 #+end_src
 
-* Corfu mode
-
-Implements completion at point. TODO requires more study.
-
-#+begin_src emacs-lisp
-  (use-package corfu
-    :custom
-    (corfu-auto t)
-    (corfu-auto-delay 0.1)
-    (corfu-auto-prefix 1)
-    (corfu-quit-mo-match 'separator)
-    (corfu-preselect 'directory)
-    :init
-    (global-corfu-mode)
-    (setq tab-always-indent 'complete))
-#+end_src
-  # ;; A few more useful configurations...
-  # ;; (use-package emacs
-  # ;;   :custom
-  # ;;   ;; Enable indentation+completion using the TAB key.
-  # ;;   ;; `completion-at-point' is often bound to M-TAB.
-  # ;;   (tab-always-indent 'complete)
-
-  # ;;   ;; Emacs 28 and newer: Hide commands in M-x which do not apply to the current
-  # ;;   ;; mode.  Corfu commands are hidden, since they are not used via M-x. This
-  # ;;   ;; setting is useful beyond Corfu.
-  # ;;   (read-extended-command-predicate #'command-completion-default-include-p))
-
 * Orderless
-** Basic working
 #+begin_src emacs-lisp
   (use-package orderless
     :custom
     (completion-styles '(orderless basic))
     (completion-category-defaults nil)
-    (completion-category-overrides '((file (styles partial-completion)))))
+    (completion-category-overrides '((file (styles basic partial-completion)))))
  #+end_src
 
-** Not working
-A completion style, copied from here: https://kristofferbalintona.me/posts/202202211546/
+* Corfu mode
+Implements completion at point.
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :custom
+    (corfu-auto t)
+    (corfu-auto-delay 0.1)
+    (corfu-auto-prefix 2)
+    (corfu-quit-mo-match 'separator)
+    (corfu-preselect 'directory)
+    :bind (:map corfu-map ("SPC" . corfu-insert-separator))
+    :init
+    (global-corfu-mode)
+    (setq tab-always-indent 'complete))
+#+end_src
 
 * Embark
 
