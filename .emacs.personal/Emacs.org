@@ -17,6 +17,7 @@
   - [[#zooming-inout][Zooming in/out]]
   - [[#highlight-todo][Highlight TODO]]
 - [[#beacon][Beacon]]
+- [[#pulsar][Pulsar]]
 - [[#dired][Dired]]
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
@@ -269,6 +270,25 @@ This is to find the cursor upon movement
     (beacon-mode 1))
 #+end_src
 
+* Pulsar
+This is to temporarily highlight the current line
+#+begin_src emacs-lisp
+  (use-package pulsar
+    :ensure t
+    :bind
+    (:map global-map
+  	("C-x l" . pulsar-pulse-line) ; overrides `count-lines-page'
+  	("C-x L" . pulsar-highlight-permanently-dwim)) ; or use `pulsar-highlight-temporarily-dwim'
+    :init
+    (pulsar-global-mode 1)
+    :config
+    (setq pulsar-delay 0.055
+  	pulsar-iterations 5 
+  	pulsar-face 'pulsar-green
+  	pulsar-region-face 'pulsar-yellow
+  	pulsar-highlight-face 'pulsar-magenta))
+#+end_src
+#+end_src
 * Dired
 Dired jump key binding
 #+begin_src emacs-lisp
