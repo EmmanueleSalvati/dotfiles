@@ -18,6 +18,7 @@
   - [[#highlight-todo][Highlight TODO]]
 - [[#beacon][Beacon]]
 - [[#pulsar][Pulsar]]
+- [[#dimmer][Dimmer]]
 - [[#dired][Dired]]
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
@@ -288,6 +289,18 @@ This is to temporarily highlight the current line
   	pulsar-region-face 'pulsar-yellow
   	pulsar-highlight-face 'pulsar-magenta))
 #+end_src
+#+end_src
+* Dimmer
+To dim the unused buffer.
+#+begin_src emacs-lisp
+  (use-package dimmer
+    :ensure t
+    :init
+    (dimmer-mode t)
+    :config
+    (setq dimmer-fraction 0.3))
+#+end_src  
+
 #+end_src
 * Dired
 Dired jump key binding
