@@ -19,6 +19,7 @@
 - [[#beacon][Beacon]]
 - [[#pulsar][Pulsar]]
 - [[#dimmer][Dimmer]]
+- [[#golden-ratio][Golden ratio]]
 - [[#dired][Dired]]
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
@@ -300,7 +301,15 @@ To dim the unused buffer.
     :config
     (setq dimmer-fraction 0.3))
 #+end_src  
-
+* Golden ratio
+#+begin_src emacs-lisp
+  (use-package golden-ratio
+    :ensure t
+    :init
+    (golden-ratio-mode 1)
+    :config
+    (setq golden-ratio-auto-scale t)
+    (add-to-list 'golden-ratio-exclude-buffer-names "treemacs-mode"))
 #+end_src
 * Dired
 Dired jump key binding
