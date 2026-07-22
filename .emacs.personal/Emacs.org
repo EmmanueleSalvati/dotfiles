@@ -23,6 +23,7 @@
 - [[#dired][Dired]]
 - [[#ibuffer][Ibuffer]]
 - [[#which-key][Which-key]]
+- [[#helpful][Helpful]]
 - [[#evil-mode][Evil-mode]]
 - [[#magit][Magit]]
 - [[#org-mode][Org Mode]]
@@ -346,6 +347,19 @@ Useful UI panel for key bindings
 	  which-key-separator " → " ))
 #+end_src
 
+* Helpful
+To improve help commands.
+#+begin_src emacs-lisp
+  (use-package helpful
+    :ensure t
+    :config
+    (keymap-global-set "C-h v" #'helpful-variable)
+    (keymap-global-set "C-h f" #'helpful-callable)
+    (keymap-global-set "C-h k" #'helpful-key)
+    (keymap-global-set "C-h x" #'helpful-commands)
+    (keymap-global-set "C-h j" #'helpful-at-point)
+    (keymap-global-set "C-h F" #'helpful-function))
+#+end_src
 * Evil-mode
 
 Emacs default keybindings for cursor movement are hard to use. Switching to evil, let's see if they are better
