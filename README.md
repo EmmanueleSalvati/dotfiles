@@ -1,7 +1,7 @@
 # Use stow to link dotfiles to your home directory
 
 ```
-cd dotfiles/```
+cd dotfiles/
 stow -v .
 ```
 
