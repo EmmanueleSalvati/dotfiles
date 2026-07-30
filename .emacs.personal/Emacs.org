@@ -481,7 +481,7 @@ Useful for automatically expanding src code
 
 Here we go. Setup the agenda, trying to remove unnecessary stuff.
 #+begin_src emacs-lisp
-  (setq org-base-path (expand-file-name "~/Nextcloud-stallone/Documents/org"))
+  (setq org-base-path (expand-file-name "~/Nextcloud-stallone-yarnbaby/Documents/org"))
 
   (define-key global-map (kbd "C-c c") #'org-capture)
   (define-key global-map (kbd "C-c a") #'org-agenda)
@@ -669,6 +669,7 @@ Configure custom views
     :bind (("C-c n l" . org-roam-buffer-toggle)
   	 ("C-c n f" . org-roam-node-find)
   	 ("C-c n i" . org-roam-node-insert)
+  	 ("C-c n c" . org-roam-capture)
   	 :map org-mode-map
   	 ("C-M-i" . completion-at-point)
   	 :map org-roam-dailies-map
@@ -762,6 +763,8 @@ inserts. Instead, we do a little copying and implement our own function.
 #+end_src
 
 *** Capture Templates
+TODO Complete this section by simplifying the literature note.
+
 #+begin_src emacs-lisp
   (setq org-roam-capture-templates
         '(("d" "default" plain
@@ -819,6 +822,8 @@ Use citar-modified capture template for literature notes:
 #+begin_src emacs-lisp
   (setq citar-org-roam-capture-template-key "n")
 #+end_src
+
+NOTE I don't think the citar-org-roam--create-capture-note exists anymore.
 
 # #+begin_src emacs-lisp
 #   ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
