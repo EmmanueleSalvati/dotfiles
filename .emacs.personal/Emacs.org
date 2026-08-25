@@ -5,6 +5,7 @@
 
 * Table of Contents                                                     :TOC:
 - [[#package-system-setup][Package System Setup]]
+  - [[#setup-lexical-binding][Setup lexical binding]]
   - [[#setup-straightel][Setup Straight.el]]
   - [[#debug-on-startup][Debug on Startup]]
   - [[#ignore-pesky-warnings-of-functions-not-found][Ignore pesky warnings of functions not found]]
@@ -79,6 +80,11 @@
   - [[#use-command-log-mode-to-see-it-on-the-side][Use command-log-mode to see it on the side]]
 
 * Package System Setup
+** Setup lexical binding
+This is because Emacs 31+ is going to move from dynamic to lexical binding
+#+begin_src emacs-lisp
+  ;;; -*- lexical-binding: t -*-
+#+end_src
 ** Setup Straight.el
 #+begin_src emacs-lisp
   (defvar bootstrap-version)
