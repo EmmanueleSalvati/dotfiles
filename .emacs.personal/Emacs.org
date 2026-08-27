@@ -715,6 +715,9 @@ Here things get a bit complex. This is the sequence:
 3. Use =citar-org-roam= to link citar with org-roam and open an org-roam node every time I use =citar-open=.
 
 **** Citar configuration
+
+citar is the basic library to interact with bib files.
+
 #+begin_src emacs-lisp
   (setq bibliography-list (list (format "%s/%s" org-roam-base-path "biblio.bib")))
 
@@ -737,6 +740,8 @@ Here things get a bit complex. This is the sequence:
 #+end_src
 
 **** citar-org-roam configuration
+
+=citar-org-roam= adds 
 #+begin_src emacs-lisp
   (use-package citar-org-roam
     :after (citar org-roam)
@@ -831,7 +836,7 @@ Use citar-modified capture template for literature notes:
 
 NOTE I don't think the citar-org-roam--create-capture-note exists anymore.
 
-# #+begin_src emacs-lisp
+# # #+begin_src emacs-lisp
 #   ;; citar-org-roam only offers the citar-org-roam-note-title-template variable
 #   ;; for customizing the contents of a new note and no way to specify a custom
 #   ;; capture template. And the title template uses citar's own format, which means
