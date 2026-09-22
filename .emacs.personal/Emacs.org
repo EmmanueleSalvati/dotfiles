@@ -674,7 +674,7 @@ Configure custom views
   (setq org-roam-base-path (concat org-base-path "-roam"))
 
   (use-package org-roam
-    :bind (("C-c n l" . org-roam-buffer-toggle)
+    :bind (("C-c n t" . org-roam-buffer-toggle)
   	 ("C-c n f" . org-roam-node-find)
   	 ("C-c n i" . org-roam-node-insert)
   	 ("C-c n c" . org-roam-capture)
@@ -962,6 +962,24 @@ Toolset that adds useful functionality to commands
   	 ("C-x C-j" . consult-dir)))
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package consult-org-roam
+    :ensure t
+    :after org-roam
+    :init
+    (require 'consult-org-roam)
+    ;; Activate the minor mode to unify consult-org-roam with org-roam
+    (consult-org-roam-mode 1)
+    :custom
+    ;; Use org-roam-node-display-template for formatting completion candidates
+    (consult-org-roam-use-org-roam-ui t)
+    :bind
+    ;; Bind convenient keys for forward links, backlinks, and searching
+    (("C-c n f" . consult-org-roam-file-find)
+     ("C-c n b" . consult-org-roam-backlinks)
+     ("C-c n l" . consult-org-roam-forward-links)
+     ("C-c n r" . consult-org-roam-search)))
+#+end_src
 * Orderless
 #+begin_src emacs-lisp
   (use-package orderless
