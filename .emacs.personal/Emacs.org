@@ -78,6 +78,7 @@
 - [[#keycasting][Keycasting]]
   - [[#use-keycast-to-see-it-in-the-header][Use keycast to see it in the header]]
   - [[#use-command-log-mode-to-see-it-on-the-side][Use command-log-mode to see it on the side]]
+- [[#spell-checker-for-text---jinx][Spell checker for text - Jinx]]
 
 * Package System Setup
 ** Setup lexical binding
@@ -1009,24 +1010,24 @@ Toolset that adds useful functionality to commands
 #+end_src
 
 
-# #+begin_src emacs-lisp
-#   (use-package consult-org-roam
-#     :ensure t
-#     :after org-roam
-#     :init
-#     (require 'consult-org-roam)
-#     ;; Activate the minor mode to unify consult-org-roam with org-roam
-#     (consult-org-roam-mode 1)
-#     :custom
-#     ;; Use org-roam-node-display-template for formatting completion candidates
-#     (consult-org-roam-use-org-roam-ui t)
-#     :bind
-#     ;; Bind convenient keys for forward links, backlinks, and searching
-#     (("C-c n f" . consult-org-roam-file-find)
-#      ("C-c n b" . consult-org-roam-backlinks)
-#      ("C-c n l" . consult-org-roam-forward-links)
-#      ("C-c n r" . consult-org-roam-search)))
-# #+end_src
+#+begin_src emacs-lisp
+  (use-package consult-org-roam
+    :ensure t
+    :after org-roam
+    :init
+    (require 'consult-org-roam)
+    ;; Activate the minor mode to unify consult-org-roam with org-roam
+    (consult-org-roam-mode 1)
+    :custom
+    ;; Use org-roam-node-display-template for formatting completion candidates
+    (consult-org-roam-use-org-roam-ui t)
+    :bind
+    ;; Bind convenient keys for forward links, backlinks, and searching
+    (("C-c n f" . consult-org-roam-file-find)
+     ("C-c n b" . consult-org-roam-backlinks)
+     ("C-c n l" . consult-org-roam-forward-links)
+     ("C-c n r" . consult-org-roam-search)))
+#+end_src
 
 * Orderless
 #+begin_src emacs-lisp
@@ -1529,3 +1530,13 @@ NOTE not sure it is working.
 #     :config
 #     (global-command-log-mode 1))
 # #+end_src
+* Spell checker for text - Jinx
+Thanks to Gemini, again.
+
+#+begin_src emacs-lisp
+  (use-package jinx
+    :ensure t
+    :hook (text-mode . jinx-mode)
+    :bind (("M-$" . jinx-correct)
+  	 ("C-M-$" . jinx-languages)))
+#+end_src
