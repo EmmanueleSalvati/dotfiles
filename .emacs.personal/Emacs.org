@@ -1542,7 +1542,7 @@ NOTE not sure it is working.
     :ensure t
     :config
     (global-command-log-mode 1)
-    (setq command-log-mode-auto-show 1))
+    (setq command-log-mode-auto-show nil))
 #+end_src
 
 #+RESULTS:
