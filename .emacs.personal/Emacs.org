@@ -11,6 +11,7 @@
   - [[#ignore-pesky-warnings-of-functions-not-found][Ignore pesky warnings of functions not found]]
   - [[#keep-folders-clean][Keep folders clean]]
 - [[#configure-projectel-to-avoid-conflicts][Configure Project.el to avoid conflicts]]
+- [[#use-rg-for-fast-ripgrep][Use rg for fast ripgrep]]
 - [[#ui-configuration][UI configuration]]
   - [[#font-and-transparency][Font and transparency]]
   - [[#basic-stuff][Basic stuff]]
@@ -144,6 +145,17 @@ Thanks to System Crafters
 #+begin_src emacs-lisp
   (use-package project
     :ensure t)
+#+end_src
+* Use rg for fast ripgrep
+This replaces the standard find in project.el by using the rust ripgrep.
+It is useful in a project with the key-binding "C-c s p" which is equivalent
+of the Project "C-x p g" but much faster.
+
+#+begin_src emacs-lisp
+  (use-package rg
+    :ensure t
+    :config
+    (rg-enable-default-bindings))
 #+end_src
 * UI configuration
 ** Font and transparency
