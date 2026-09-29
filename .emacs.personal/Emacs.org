@@ -157,6 +157,7 @@ of the Project "C-x p g" but much faster.
     :config
     (rg-enable-default-bindings))
 #+end_src
+
 * UI configuration
 ** Font and transparency
 
@@ -243,7 +244,7 @@ These are basic font configurations
     ;; `modus-themes-load-random', `modus-themes-load-random-dark',
     ;; `modus-themes-load-random-light').
     (modus-themes-load-random))
-    ;; (modus-themes-load-theme 'ef-summer))
+    ;; (modus-themes-load-theme 'ef-summer)
 
     ;;  (use-package doom-themes
     ;;    :init (load-theme 'doom-Iosvkem)
@@ -1334,7 +1335,7 @@ Need the treesitter yaml grammar installed:
 #     ;; 							     :autopep8 (:enabled :json-false)
 #     ;; 							     :black (:enabled t
 #     ;; 									      :line_length 88
-#     ;; 									      :cache_config t)))))))
+#     ;; 									      :cache_config t))))))
 # #+end_src
 
 * vterm
@@ -1536,12 +1537,17 @@ I could overwrite it, but it is easier done in the header.
 This is not necessary, only if I ever want to make a presentation.
 NOTE not sure it is working.
 
-# #+begin_src emacs-lisp
-#   (use-package command-log-mode
-#     :ensure t
-#     :config
-#     (global-command-log-mode 1))
-# #+end_src
+#+begin_src emacs-lisp
+  (use-package command-log-mode
+    :ensure t
+    :config
+    (global-command-log-mode 1)
+    (setq command-log-mode-auto-show 1))
+#+end_src
+
+#+RESULTS:
+: t
+
 * Spell checker for text - Jinx
 Thanks to Gemini, again.
 
