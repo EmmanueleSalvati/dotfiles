@@ -57,6 +57,7 @@
   - [[#use-treesit-auto-for-automatic-detection-of-languages][Use treesit-auto for automatic detection of languages]]
   - [[#treesitter-for-python-formatting][Treesitter for python formatting]]
   - [[#code-folding-using-the-modern-python-ts-mode][Code folding using the modern python-ts-mode]]
+  - [[#docstrings-with-numpydoc][docstrings with numpydoc]]
   - [[#indent-bars][indent-bars]]
   - [[#eglot][eglot]]
   - [[#use-ruff-formatter-for-lintingformatting][Use ruff-formatter for linting/formatting]]
@@ -1231,6 +1232,18 @@ NOTE These are the Evil mode basic commands to fold:
 - (kbd "zm") #'treesit-fold-close-all
 - (kbd "zr") #'treesit-fold-open-all
 
+** docstrings with numpydoc
+This generates a python docstring with the NumPy style (alternatives are google style, sphinx/reSt styles)
+
+#+begin_src emacs-lisp 
+  (use-package numpydoc
+    :ensure t
+    :defer t
+    :bind (:map python-ts-mode-map
+  	      ("C-c C-d" . numpydoc-generate)
+  	      :map python-mode-map
+  	      ("C-c C-d" . numpydoc-generate)))
+#+end_src
 ** indent-bars
 
 #+begin_src emacs-lisp
