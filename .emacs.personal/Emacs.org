@@ -4,8 +4,9 @@
 #+STARTUP: show2levels
 
 * Table of Contents                                                     :TOC:
+- [[#setup-lexical-binding][Setup lexical binding]]
+- [[#save-history][Save history]]
 - [[#package-system-setup][Package System Setup]]
-  - [[#setup-lexical-binding][Setup lexical binding]]
   - [[#setup-straightel][Setup Straight.el]]
   - [[#debug-on-startup][Debug on Startup]]
   - [[#ignore-pesky-warnings-of-functions-not-found][Ignore pesky warnings of functions not found]]
@@ -81,13 +82,19 @@
   - [[#use-command-log-mode-to-see-it-on-the-side][Use command-log-mode to see it on the side]]
 - [[#spell-checker-for-text---jinx][Spell checker for text - Jinx]]
 
-* Package System Setup
-** Setup lexical binding
+* Setup lexical binding
 This is because Emacs 31+ is going to move from dynamic to lexical binding
 #+begin_src emacs-lisp
   ;;; -*- lexical-binding: t -*-
 #+end_src
 
+* Save history
+#+begin_src emacs-lisp
+  (savehist-mode 1)
+  (save-place-mode 1)
+#+end_src
+
+* Package System Setup
 ** Setup Straight.el
 #+begin_src emacs-lisp
   (defvar bootstrap-version)
@@ -201,6 +208,9 @@ These are basic font configurations
   (tooltip-mode -1)
   (tool-bar-mode -1)
   (column-number-mode)
+  (global-hl-line-mode 1)
+  (electric-pair-mode 1) ; Automatically close parentheses
+
   (set-frame-parameter (selected-frame) 'alpha es/frame-transparency)
   (add-to-list 'default-frame-alist `(alpha . ,es/frame-transparency))
   (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
@@ -322,8 +332,9 @@ To dim the unused buffer.
     :init
     (dimmer-mode t)
     :config
-    (setq dimmer-fraction 0.3))
+    (setq dimmer-fraction 0.15))
 #+end_src  
+
 * Golden ratio
 #+begin_src emacs-lisp
   (use-package golden-ratio
