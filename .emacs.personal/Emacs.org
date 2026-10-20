@@ -41,6 +41,7 @@
   - [[#org-super-agenda][Org Super Agenda]]
   - [[#org-books][Org-books]]
   - [[#org-roam][Org-Roam]]
+  - [[#org-kanban][org-kanban]]
 - [[#vertico][Vertico]]
 - [[#vertico-posframe][Vertico posframe]]
 - [[#marginalia][Marginalia]]
@@ -939,7 +940,14 @@ Every zettel is a draft until declared otherwise:
   	org-roam-ui-update-on-save t
   	org-roam-ui-open-on-start t))
 #+end_src
-
+** org-kanban
+#+begin_src emacs-lisp
+  (use-package org-kanban
+    :ensure t
+    :after org
+    :bind (:map org-mode-map
+  	      ("C-c k" . org-kanban/shift)))
+#+end_src
 * Vertico
 
 #+begin_src emacs-lisp
